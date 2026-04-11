@@ -1,0 +1,7 @@
+{
+  "name": "WIL Mag - Women Impact Level",
+  "description": "Plateforme média premium célébrant les femmes qui transforment l'Afrique. Magazine, TV, articles et événements exclusifs.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}

@@ -1,0 +1,212 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User profile and subscription data",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "displayName": { "type": "string" },
+        "phone": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "role": { "type": "string", "enum": ["user", "editor", "admin", "super-admin"] },
+        "subscriptionStatus": { "type": "string", "enum": ["free", "premium"] },
+        "subscriptionId": { "type": "string" },
+        "favorites": { "type": "array", "items": { "type": "string" } },
+        "readingHistory": { "type": "array", "items": { "type": "string" } },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Comment": {
+      "title": "Comment",
+      "description": "User comments on articles or videos",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "userId": { "type": "string" },
+        "userName": { "type": "string" },
+        "userPhoto": { "type": "string" },
+        "targetId": { "type": "string", "description": "ID of the article or video" },
+        "status": { "type": "string", "enum": ["pending", "approved", "rejected"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["content", "userId", "targetId", "status"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Contact messages from users",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "subject": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["new", "read", "replied"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "message", "status"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "description": "Scrolling marquee announcements",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["text", "isActive"]
+    },
+    "Article": {
+      "title": "Article",
+      "description": "Editorial content",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "excerpt": { "type": "string" },
+        "content": { "type": "string" },
+        "author": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "category": { "type": "string" },
+        "image": { "type": "string" },
+        "isPremium": { "type": "boolean" }
+      },
+      "required": ["title", "content", "category"]
+    },
+    "Video": {
+      "title": "Video",
+      "description": "TV and video content",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "thumbnail": { "type": "string" },
+        "videoUrl": { "type": "string" },
+        "duration": { "type": "string" },
+        "category": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["title", "videoUrl"]
+    },
+    "Magazine": {
+      "title": "Magazine",
+      "description": "Digital and print magazine issues",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "issueDate": { "type": "string" },
+        "coverImage": { "type": "string" },
+        "pdfUrl": { "type": "string" },
+        "description": { "type": "string" }
+      },
+      "required": ["title", "coverImage"]
+    },
+    "Event": {
+      "title": "Event",
+      "description": "Summit and networking events",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "location": { "type": "string" },
+        "description": { "type": "string" },
+        "image": { "type": "string" },
+        "price": { "type": "number" }
+      },
+      "required": ["title", "date", "price"]
+    },
+    "CustomSection": {
+      "title": "Custom Content Section",
+      "description": "Dynamic content blocks added by admin",
+      "type": "object",
+      "properties": {
+        "page_slug": { "type": "string" },
+        "section_type": { "type": "string", "enum": ["texte", "cartes", "galerie", "cta", "stats", "logos", "temoignages", "deux_colonnes"] },
+        "title": { "type": "string" },
+        "content": { "type": "object" },
+        "order_index": { "type": "integer" },
+        "is_active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["page_slug", "section_type", "order_index"]
+    },
+    "Media": {
+      "title": "Media Asset",
+      "description": "Base64 encoded media stored in Firestore as a workaround for Storage rules",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "type": { "type": "string" },
+        "data": { "type": "string", "description": "Base64 encoded data" },
+        "owner": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "type", "data"]
+    },
+    "Reservation": {
+      "title": "Event Reservation",
+      "description": "User reservations for events",
+      "type": "object",
+      "properties": {
+        "eventId": { "type": "string" },
+        "eventTitle": { "type": "string" },
+        "userName": { "type": "string" },
+        "userEmail": { "type": "string", "format": "email" },
+        "userPhone": { "type": "string" },
+        "ticketType": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["eventId", "userName", "userEmail", "ticketType", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{uid}": {
+      "schema": "User",
+      "description": "User profiles"
+    },
+    "/articles/{articleId}": {
+      "schema": "Article",
+      "description": "Editorial articles"
+    },
+    "/videos/{videoId}": {
+      "schema": "Video",
+      "description": "Video content"
+    },
+    "/magazines/{magazineId}": {
+      "schema": "Magazine",
+      "description": "Magazine issues"
+    },
+    "/events/{eventId}": {
+      "schema": "Event",
+      "description": "Events"
+    },
+    "/custom_sections/{sectionId}": {
+      "schema": "CustomSection",
+      "description": "Dynamic page sections"
+    },
+    "/comments/{commentId}": {
+      "schema": "Comment",
+      "description": "User comments"
+    },
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Contact messages"
+    },
+    "/announcements/{announcementId}": {
+      "schema": "Announcement",
+      "description": "Marquee announcements"
+    },
+    "/media/{mediaId}": {
+      "schema": "Media",
+      "description": "Base64 media assets"
+    },
+    "/reservations/{reservationId}": {
+      "schema": "Reservation",
+      "description": "Event reservations"
+    }
+  }
+}
