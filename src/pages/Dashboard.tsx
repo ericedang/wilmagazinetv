@@ -1448,7 +1448,7 @@ export default function Dashboard() {
                 <div className="bg-white p-8 border border-gray-100 shadow-sm space-y-6">
                   <div className="space-y-2">
                     <label className="text-[10px] uppercase tracking-widest font-bold">{t('dashboard_platform_name')}</label>
-                    <input type="text" defaultValue="Women Impact" className="w-full p-3 border border-gray-100 text-sm" />
+                    <input type="text" defaultValue="Women Impact - Excellence & Leadership Féminin" className="w-full p-3 border border-gray-100 text-sm" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] uppercase tracking-widest font-bold">{t('dashboard_whatsapp_contact')}</label>

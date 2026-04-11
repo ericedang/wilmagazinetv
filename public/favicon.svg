@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="6" fill="#800020"/>
+  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" fill="#D4AF37" font-family="serif" font-weight="bold" font-size="18">W</text>
+  <path d="M6 26 L10 26 L10 28 L6 28 Z" fill="#D4AF37" opacity="0.5"/>
+  <path d="M22 26 L26 26 L26 28 L22 28 Z" fill="#D4AF37" opacity="0.5"/>
+</svg>

@@ -14,10 +14,10 @@ export default function Footer() {
           <div className="md:col-span-4">
             <h4 className="font-serif text-lg mb-6 text-gold">{t('contact')}</h4>
             <p className="text-gray-400 text-sm mb-4 leading-relaxed">
-              WIL MEDIA GROUP<br />
+              WOMEN IMPACT MEDIA GROUP<br />
               Yaoundé, Cameroun<br />
               Tél: +237 697 061 084<br />
-              Email: contact@womenimpactlevel.com
+              Email: contact@womenimpact.com
             </p>
             <div className="flex space-x-5">
               <a href="#" className="text-gray-400 hover:text-gold transition-colors"><Facebook size={20} /></a>

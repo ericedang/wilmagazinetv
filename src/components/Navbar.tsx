@@ -65,13 +65,13 @@ export default function Navbar() {
               "font-serif text-3xl md:text-4xl font-bold tracking-tighter transition-colors duration-500",
               isScrolled || isOpen ? "text-burgundy" : "text-white"
             )}>
-              WIL <span className="font-light italic">Magazine</span>
+              Women <span className="font-light italic">Impact</span>
             </span>
             <span className={cn(
               "text-[8px] md:text-[9px] tracking-[0.4em] uppercase transition-colors duration-500 text-center",
               isScrolled || isOpen ? "text-gold" : "text-gold-light"
             )}>
-              Women Impact Level
+              Excellence & Leadership
             </span>
           </Link>
 
