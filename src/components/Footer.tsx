@@ -17,7 +17,8 @@ export default function Footer() {
               WOMEN IMPACT MEDIA GROUP<br />
               Yaoundé, Cameroun<br />
               Tél: +237 697 061 084<br />
-              Email: contact@womenimpact.com
+              Email: contact@womenimpact.com<br />
+              Web: <a href="https://www.wilmagazinetv.com" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors">www.wilmagazinetv.com</a>
             </p>
             <div className="flex space-x-5">
               <a href="#" className="text-gray-400 hover:text-gold transition-colors"><Facebook size={20} /></a>
