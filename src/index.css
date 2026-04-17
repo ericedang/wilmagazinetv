@@ -10,7 +10,7 @@
   --color-gold-light: #F4E4A1;
   --color-black-rich: #0F0F0F;
 
-  --animate-marquee: marquee 30s linear infinite;
+  --animate-marquee: marquee 80s linear infinite;
   
   @keyframes marquee {
     0% { transform: translateX(0); }
@@ -67,3 +67,24 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* React-Quill overrides */
+.rich-text-editor .ql-container {
+  font-family: inherit;
+  font-size: inherit;
+  border-color: #f3f4f6 !important; /* Tailwind gray-100 */
+}
+.rich-text-editor .ql-toolbar {
+  border-color: #f3f4f6 !important;
+  font-family: var(--font-sans);
+}
+.rich-text-editor .ql-editor {
+  min-height: 200px;
+  font-family: var(--font-serif);
+  font-size: 1.125rem; /* text-lg approx */
+  line-height: 1.75;
+}
+.rich-text-editor .ql-editor:focus {
+  outline: none;
+}
+

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import PageBuilder from '../components/sections/PageBuilder';
 import { useFirestoreCollection } from '../hooks/useFirestoreCollection';
@@ -9,6 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLocalizedField } from '../lib/i18n-utils';
 import BackButton from '../components/BackButton';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase';
+import ReactMarkdown from 'react-markdown';
 
 export default function Magazine() {
   const navigate = useNavigate();
@@ -16,6 +19,16 @@ export default function Magazine() {
   const getLocalized = useLocalizedField();
   const { data: magazines, loading } = useFirestoreCollection<MagazineType>('magazines');
   const [selectedMagazine, setSelectedMagazine] = useState<MagazineType | null>(null);
+  const [editorial, setEditorial] = useState<{ title: string, author: string, role: string, content: string, image: string } | null>(null);
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, 'settings', 'magazineEditorial'), (snap) => {
+      if (snap.exists()) {
+        setEditorial(snap.data() as any);
+      }
+    });
+    return () => unsub();
+  }, []);
 
   const nativeSections = [
     {
@@ -30,6 +43,44 @@ export default function Magazine() {
           </div>
         </div>
       )
+    },
+    {
+      id: 'magazine-editorial',
+      orderIndex: 10,
+      component: editorial && editorial.content ? (
+        <div className="container-custom mb-32">
+          <div className="bg-gray-50 border border-gray-100 shadow-xl overflow-hidden flex flex-col md:flex-row">
+            {editorial.image && (
+              <div className="w-full md:w-2/5 aspect-square md:aspect-auto relative bg-gray-200">
+                <img 
+                  src={editorial.image} 
+                  alt={editorial.author} 
+                  className="w-full h-full object-cover absolute inset-0"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            )}
+            <div className="w-full md:w-3/5 p-12 md:p-16 flex flex-col justify-center">
+              <h2 className="text-4xl font-serif mb-8 text-burgundy">{editorial.title || 'Éditorial'}</h2>
+              <div 
+                className="prose prose-burgundy max-w-none font-serif leading-relaxed text-gray-700 mb-10"
+                dangerouslySetInnerHTML={{ __html: editorial.content }}
+              />
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-burgundy font-bold uppercase overflow-hidden">
+                   {editorial.image ? (
+                     <img src={editorial.image} alt="author" className="w-full h-full object-cover" />
+                   ) : editorial.author ? editorial.author.charAt(0) : 'A'}
+                </div>
+                <div>
+                  <div className="text-sm font-bold uppercase tracking-widest text-burgundy">{editorial.author}</div>
+                  <div className="text-[10px] text-gray-500 uppercase tracking-widest">{editorial.role}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null
     },
     {
       id: 'magazine-grid',

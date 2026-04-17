@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { db, doc, getDoc, updateDoc, arrayUnion, arrayRemove, OperationType, handleFirestoreError } from '../firebase';
 import { Article } from '../types';
 import { useAuth } from '../contexts/AuthContext';
-import { Loader2, ArrowLeft, Crown, Clock, User, Share2, Bookmark } from 'lucide-react';
+import { Loader2, ArrowLeft, Crown, Clock, User, Share2, Bookmark, Linkedin, Facebook, Twitter, Link as LinkIcon } from 'lucide-react';
 import { motion } from 'motion/react';
 import ReactMarkdown from 'react-markdown';
 import CommentSection from '../components/CommentSection';
@@ -22,6 +22,26 @@ export default function ArticleDetail() {
   const [article, setArticle] = useState<Article | null>(null);
   const [loading, setLoading] = useState(true);
   const isPremium = profile?.subscriptionStatus === 'premium';
+
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const shareTitle = article ? getLocalized(article, 'title') : '';
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          url: shareUrl
+        });
+      } catch (err) {
+        console.log('Error sharing:', err);
+      }
+    } else {
+      // Fallback: scroll to social buttons or copy link
+      navigator.clipboard.writeText(shareUrl);
+      toast.success(t('link_copied'));
+    }
+  };
 
   const toggleFavorite = async () => {
     if (!user || !article) {
@@ -86,21 +106,15 @@ export default function ArticleDetail() {
     );
   }
 
-  if (article.isPremium && !isPremium) {
-    return (
-      <div className="pt-32 min-h-screen container-custom text-center">
-        <BackButton className="mx-auto mb-8" />
-        <div className="max-w-2xl mx-auto bg-black-rich p-16 text-white shadow-2xl">
-          <Crown size={48} className="mx-auto mb-8 text-gold" />
-          <h1 className="text-4xl font-serif mb-6">{t('premium_content')}</h1>
-          <p className="text-gray-400 mb-12 leading-relaxed">
-            {t('premium_article_description')}
-          </p>
-          <Link to="/subscribe" className="btn-gold w-full py-4">{t('subscribe_now')}</Link>
-        </div>
-      </div>
-    );
-  }
+  // Remove the early return block for article.isPremium to allow viewing the header/image
+
+  const isPremiumRestriction = !isPremium; // Applicable to all non-subscribers for all articles
+
+  const getTruncatedContent = (content: string) => {
+    const paragraphs = content.split('\n\n');
+    if (paragraphs.length <= 2) return content.substring(0, 300) + '...';
+    return paragraphs.slice(0, 2).join('\n\n') + '\n\n...';
+  };
 
   return (
     <div className="pt-32 pb-20 min-h-screen bg-white">
@@ -127,7 +141,7 @@ export default function ArticleDetail() {
               </div>
             </div>
             <div className="flex items-center gap-6 text-gray-400">
-              <button className="hover:text-gold transition-colors flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold">
+              <button onClick={handleShare} className="hover:text-gold transition-colors flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold">
                 <Share2 size={16} /> {t('share')}
               </button>
               <button 
@@ -144,16 +158,82 @@ export default function ArticleDetail() {
           </div>
         </header>
 
-        <div className="aspect-video mb-16 overflow-hidden shadow-2xl">
-          <img src={article.image} alt={getLocalized(article, 'title')} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+        <div className="aspect-video mb-16 overflow-hidden shadow-2xl bg-gray-100">
+          <img 
+            src={article.image || `https://picsum.photos/seed/${article.id}/1600/900`} 
+            alt={getLocalized(article, 'title')} 
+            className="w-full h-full object-cover" 
+            referrerPolicy="no-referrer" 
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${article.id}/1600/900`;
+            }}
+          />
         </div>
 
-        <div className="prose prose-xl prose-burgundy max-w-none font-serif leading-relaxed text-gray-800 mb-20">
-          <ReactMarkdown>{getLocalized(article, 'content')}</ReactMarkdown>
+        <div className="relative mb-16">
+          <div className="prose prose-xl prose-burgundy max-w-none font-serif leading-relaxed text-gray-800">
+            <ReactMarkdown>
+              {isPremiumRestriction ? getTruncatedContent(getLocalized(article, 'content')) : getLocalized(article, 'content')}
+            </ReactMarkdown>
+          </div>
+          {isPremiumRestriction && (
+            <div className="absolute bottom-0 left-0 right-0 h-64 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none flex items-end justify-center pb-8" />
+          )}
         </div>
 
-        {/* Comment Section */}
-        <CommentSection targetId={article.id} />
+        {isPremiumRestriction ? (
+          <div className="max-w-3xl mx-auto bg-black-rich p-12 text-white shadow-2xl text-center mb-16 relative z-10 border border-gold/20">
+            <Crown size={48} className="mx-auto mb-6 text-gold" />
+            <h2 className="text-3xl font-serif mb-4">Lisez la suite de cet article</h2>
+            <p className="text-gray-400 mb-8 max-w-xl mx-auto">
+              Le Women In Leadership Magazine vous offre du contenu exclusif de haute qualité. Abonnez-vous pour lire l'intégralité de cet article et soutenir le mouvement.
+            </p>
+            <Link to="/subscription" className="btn-gold inline-block px-12 py-4 shadow-xl shadow-gold/20">S'abonner pour continuer</Link>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12 border-t border-gray-100 mb-12">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400 mb-6">{t('share_this_article')}</h3>
+            <div className="flex items-center gap-4">
+              <a 
+                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-[#0077b5] hover:text-white transition-colors"
+                title={t('share_on_linkedin')}
+              >
+                <Linkedin size={20} />
+              </a>
+              <a 
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-[#1877f2] hover:text-white transition-colors"
+                title={t('share_on_facebook')}
+              >
+                <Facebook size={20} />
+              </a>
+              <a 
+                href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-[#1da1f2] hover:text-white transition-colors"
+                title={t('share_on_twitter')}
+              >
+                <Twitter size={20} />
+              </a>
+              <button 
+                onClick={() => { navigator.clipboard.writeText(shareUrl); toast.success(t('link_copied')); }} 
+                className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-600 hover:bg-gold hover:text-white transition-colors"
+                title={t('copy_link')}
+              >
+                <LinkIcon size={20} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Comment Section (only for premium to encourage subscribing, or for everybody?) */}
+        {!isPremiumRestriction && <CommentSection targetId={article.id} />}
       </article>
     </div>
   );

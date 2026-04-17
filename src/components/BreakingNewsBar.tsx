@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 const BreakingNewsBar = () => {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [speed, setSpeed] = useState(40);
+  const [speed, setSpeed] = useState(80);
   const { t } = useTranslation();
   const location = useLocation();
   const allowedPaths = ['/tv', '/events', '/dashboard'];
@@ -30,7 +30,7 @@ const BreakingNewsBar = () => {
 
     const unsubSettings = onSnapshot(doc(db, 'settings', 'marquee'), (snap) => {
       if (snap.exists()) {
-        setSpeed(snap.data().speed || 40);
+        setSpeed(snap.data().speed || 80);
       }
     });
 
@@ -46,7 +46,7 @@ const BreakingNewsBar = () => {
     <div className="fixed bottom-0 left-0 w-full z-[60] backdrop-blur-md bg-black/40 border-t border-white/10 pointer-events-none">
       <div className="overflow-hidden whitespace-nowrap py-3 flex items-center">
         <div 
-          className="flex animate-marquee hover:[animation-play-state:paused] pointer-events-auto cursor-default"
+          className="flex animate-breaking-news hover:[animation-play-state:paused] pointer-events-auto cursor-default"
           style={{ animationDuration: `${speed}s` }}
         >
           {/* Duplicate for seamless loop */}
@@ -65,12 +65,12 @@ const BreakingNewsBar = () => {
       </div>
       
       <style>{`
-        @keyframes marquee {
+        @keyframes breakingNewsMarquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-25%); }
         }
-        .animate-marquee {
-          animation: marquee linear infinite;
+        .animate-breaking-news {
+          animation: breakingNewsMarquee linear infinite;
         }
       `}</style>
     </div>

@@ -162,8 +162,16 @@ export const ArticlesGrid = () => {
         <div className="editorial-grid">
           <div className="md:col-span-8">
             <Link to={`/articles/${articles[0].id}`} className="group block">
-              <div className="relative overflow-hidden aspect-[16/9] mb-6">
-                <img src={articles[0].image} alt={getLocalized(articles[0], 'title')} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" referrerPolicy="no-referrer" />
+              <div className="relative overflow-hidden aspect-[16/9] mb-6 bg-gray-100">
+                <img 
+                  src={articles[0].image || `https://picsum.photos/seed/${articles[0].id}/1600/900`} 
+                  alt={getLocalized(articles[0], 'title')} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                  referrerPolicy="no-referrer" 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${articles[0].id}/1600/900`;
+                  }}
+                />
                 <div className="absolute top-6 left-6 bg-burgundy text-white px-4 py-1 text-[10px] uppercase tracking-widest">{getLocalized(articles[0], 'category')}</div>
               </div>
               <h3 className="text-3xl md:text-4xl font-serif mb-4 group-hover:text-burgundy transition-colors">{getLocalized(articles[0], 'title')}</h3>
@@ -178,8 +186,16 @@ export const ArticlesGrid = () => {
           <div className="md:col-span-4 space-y-12">
             {articles.slice(1, 3).map((article) => (
               <Link key={article.id} to={`/articles/${article.id}`} className="group block">
-                <div className="relative overflow-hidden aspect-video mb-4">
-                  <img src={article.image} alt={getLocalized(article, 'title')} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" referrerPolicy="no-referrer" />
+                <div className="relative overflow-hidden aspect-video mb-4 bg-gray-100">
+                  <img 
+                    src={article.image || `https://picsum.photos/seed/${article.id}/800/600`} 
+                    alt={getLocalized(article, 'title')} 
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                    referrerPolicy="no-referrer" 
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${article.id}/800/600`;
+                    }}
+                  />
                   {article.isPremium && <div className="absolute top-4 right-4 bg-gold text-black-rich p-2"><Crown size={12} /></div>}
                 </div>
                 <h4 className="text-xl font-serif mb-2 group-hover:text-burgundy transition-colors">{getLocalized(article, 'title')}</h4>

@@ -1,0 +1,13 @@
+442:              "title": "Titre accrocheur",
+443:              "summary": "Résumé court et percutant",
+444:              "content": "Corps de l'article développé (plusieurs paragraphes). DOIT inclure au moins une image en Markdown: ![alt](url)",
+446:              "readTime": "X min",
+453:              "author": "Nom de l'auteur"
+926:          text: "Le véritable leadership consiste à ouvrir des portes là où d'autres ne voient que des murs. C'est un horizon de justice.",
+949:              title: "La vision stratégique",
+954:              title: "Le mentorat",
+955:              description: "Transmettre pour pérenniser l'excellence.",
+1007:          title: 'Derrière le succès',
+1009:            headline: "Ce que personne ne voit derrière la réussite",
+1027:              "La comparaison amplifie le manque",
+1029:              "Le mindset conditionne la réussite"

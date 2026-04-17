@@ -68,10 +68,13 @@ export default function Articles() {
           >
             <div className="aspect-video bg-gray-100 mb-8 overflow-hidden relative shadow-sm">
               <img 
-                src={article.image} 
+                src={article.image || `https://picsum.photos/seed/${article.id}/800/600`} 
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 alt={getLocalized(article, 'title')}
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${article.id}/800/600`;
+                }}
               />
               {article.isPremium && (
                 <div className="absolute top-4 right-4 bg-gold text-black-rich p-2 shadow-lg">

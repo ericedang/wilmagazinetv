@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { signInWithPopup, googleProvider, auth, signOut, db, doc, setDoc, updateDoc, deleteDoc, collection, addDoc, getDocs, query, limit, serverTimestamp, onSnapshot, where, orderBy, OperationType, handleFirestoreError } from '../firebase';
 import { ARTICLES, VIDEOS, MAGAZINES, EVENTS } from '../constants';
-import { Database, Loader2, Sparkles, FileText, Send, CheckCircle2, AlertCircle, Layout, Settings, Play, Image, Copy, Ticket, XCircle, Download, MessageSquare, Mail, Upload, X, Trash2 } from 'lucide-react';
+import { Database, Loader2, Sparkles, FileText, Send, CheckCircle2, AlertCircle, Layout, Settings, Play, Image, Copy, Ticket, XCircle, Download, MessageSquare, Mail, Upload, X, Trash2, Calendar } from 'lucide-react';
 import { ArrowRight, LogOut, User, CreditCard, Bookmark, History, ShieldCheck, ArrowLeft, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
@@ -15,6 +15,7 @@ import ReactMarkdown from 'react-markdown';
 import PageBuilder from '../components/sections/PageBuilder';
 import ImageUploader from '../components/admin/ImageUploader';
 import FileUploader from '../components/admin/FileUploader';
+import RichTextEditor from '../components/admin/RichTextEditor';
 import { arrayUnion, arrayRemove } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 
@@ -28,7 +29,7 @@ export default function Dashboard() {
   const [error, setError] = React.useState<string | null>(null);
   const [seeding, setSeeding] = React.useState(false);
   const [seedStatus, setSeedStatus] = React.useState<string | null>(null);
-  const [activeTab, setActiveTab] = React.useState<string>('profile');
+  const [activeTab, setActiveTab] = React.useState<string>('ai-editorial');
   const [aiInput, setAiInput] = React.useState('');
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [aiResult, setAiResult] = React.useState<any>(null);
@@ -48,7 +49,7 @@ export default function Dashboard() {
   const [selectedSection, setSelectedSection] = React.useState<any>(null);
   const [isPageBuilderEditing, setIsPageBuilderEditing] = React.useState(false);
   const [magazineData, setMagazineData] = React.useState({ title: '', issueDate: '', pdfUrl: '', coverImage: '' });
-  const [aiMode, setAiMode] = React.useState<'text' | 'file'>('text');
+  const [aiMode, setAiMode] = React.useState<'text' | 'file'>('file');
   const [filesData, setFilesData] = React.useState<{ base64?: string, text?: string, name: string, mimeType: string }[]>([]);
   const [isPublishingMagazine, setIsPublishingMagazine] = React.useState(false);
   const [isDragging, setIsDragging] = React.useState(false);
@@ -57,8 +58,13 @@ export default function Dashboard() {
   const [editingItem, setEditingItem] = React.useState<{ type: string, data: any, index: number } | null>(null);
   const [editingAnnouncement, setEditingAnnouncement] = React.useState<{ id: string, text: string } | null>(null);
   const [editingArticle, setEditingArticle] = React.useState<any>(null);
+  const [imageUploadArticle, setImageUploadArticle] = React.useState<any>(null);
+  const [magazineEditorial, setMagazineEditorial] = React.useState({ title: '', author: '', role: '', content: '', image: '' });
   const [editingVideo, setEditingVideo] = React.useState<any>(null);
-  const [marqueeSettings, setMarqueeSettings] = React.useState({ speed: 40 });
+  const [editingEvent, setEditingEvent] = React.useState<any>(null);
+  const [isEventModalOpen, setIsEventModalOpen] = React.useState(false);
+  const [newEventData, setNewEventData] = React.useState({ title: '', category: '', date: '', location: '', price: '', image: '', attendees: 0, description: '' });
+  const [marqueeSettings, setMarqueeSettings] = React.useState({ speed: 80 });
   const [newVideoData, setNewVideoData] = React.useState({ title: '', category: '', duration: '', thumbnail: '', videoUrl: '', description: '' });
   const [statusMsg, setStatusMsg] = React.useState<{ text: string, type: 'success' | 'error' } | null>(null);
   const [confirmModal, setConfirmModal] = React.useState<{ isOpen: boolean, title: string, message: string, onConfirm: () => void } | null>(null);
@@ -183,6 +189,13 @@ export default function Dashboard() {
         }
       });
 
+      // Fetch magazine editorial
+      const unsubMagEditorial = onSnapshot(doc(db, 'settings', 'magazineEditorial'), (snap) => {
+        if (snap.exists()) {
+          setMagazineEditorial(snap.data() as { title: string, author: string, role: string, content: string, image: string });
+        }
+      });
+
       // Fetch magazines
       const qMag = query(collection(db, 'magazines'), orderBy('createdAt', 'desc'));
       const unsubMag = onSnapshot(qMag, (snap) => {
@@ -204,6 +217,7 @@ export default function Dashboard() {
         unsubArt();
         unsubVid();
         unsubMarquee();
+        unsubMagEditorial();
         unsubMag();
         unsubEve();
       };
@@ -246,17 +260,68 @@ export default function Dashboard() {
     setIsVideoModalOpen(true);
   };
 
+  const handleEditEvent = (event: any) => {
+    setEditingEvent(event);
+    setNewEventData({
+      title: event.title,
+      category: event.category || '',
+      date: event.date,
+      location: event.location,
+      price: event.price || '',
+      image: event.image,
+      attendees: event.attendees || 0,
+      description: event.description || ''
+    });
+    setIsEventModalOpen(true);
+  };
+
+  const handleSaveEvent = async () => {
+    try {
+      if (editingEvent) {
+        await updateDoc(doc(db, 'events', editingEvent.id), newEventData);
+      } else {
+        await addDoc(collection(db, 'events'), { ...newEventData, createdAt: serverTimestamp() });
+      }
+      showStatus(t('update_success'));
+      setIsEventModalOpen(false);
+      setEditingEvent(null);
+      setNewEventData({ title: '', category: '', date: '', location: '', price: '', image: '', attendees: 0, description: '' });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, 'events');
+    }
+  };
+
   const handleSaveArticle = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingArticle) return;
     try {
       const { id, ...data } = editingArticle;
-      await updateDoc(doc(db, 'articles', id), data);
-      showStatus(t('update_success'));
+      if (id) {
+        await updateDoc(doc(db, 'articles', id), data);
+        showStatus(t('update_success'));
+      } else {
+        await addDoc(collection(db, 'articles'), {
+          ...data,
+          author: profile?.name || 'Admin',
+          createdAt: serverTimestamp(),
+          views: 0
+        });
+        showStatus('Article créé avec succès');
+      }
       setIsArticleModalOpen(false);
       setEditingArticle(null);
     } catch (error) {
-      handleFirestoreError(error, OperationType.WRITE, `articles/${editingArticle.id}`);
+      handleFirestoreError(error, OperationType.WRITE, `articles/${editingArticle?.id || 'new'}`);
+    }
+  };
+
+  const handleQuickImageUpload = async (articleId: string, imageUrl: string) => {
+    try {
+      await updateDoc(doc(db, 'articles', articleId), { image: imageUrl });
+      showStatus(t('update_success'));
+      setImageUploadArticle(null);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.WRITE, `articles/${articleId}`);
     }
   };
 
@@ -431,6 +496,8 @@ export default function Dashboard() {
         4. Categorize content into: Leadership, Business, Inspiration, Society, Culture.
         5. Ensure the tone is sophisticated, professional, and tailored for an African audience.
         6. All output must be in FRENCH.
+        7. CRITICAL: EVERY article MUST have a cover image. Use a relevant placeholder like "https://picsum.photos/seed/keyword/1600/900" where 'keyword' is related to the article.
+        8. CRITICAL: EVERY article's 'content' MUST include at least one inline image using Markdown syntax (e.g., \`![description](https://picsum.photos/seed/another_keyword/800/400)\`) to illustrate the text.
         
         OUTPUT FORMAT:
         You MUST return a JSON object following this exact schema:
@@ -439,10 +506,10 @@ export default function Dashboard() {
             {
               "title": "Titre accrocheur",
               "summary": "Résumé court et percutant",
-              "content": "Corps de l'article développé (plusieurs paragraphes)",
+              "content": "Corps de l'article développé (plusieurs paragraphes). DOIT inclure au moins une image en Markdown: ![alt](url)",
               "category": "Leadership | Business | Inspiration | Society | Culture",
               "readTime": "X min",
-              "image": "URL d'image descriptive (optionnel)"
+              "image": "URL d'image descriptive OBLIGATOIRE (ex: https://picsum.photos/seed/...)"
             }
           ],
           "quotes": [
@@ -470,7 +537,7 @@ export default function Dashboard() {
                 readTime: { type: Type.STRING },
                 image: { type: Type.STRING }
               },
-              required: ["title", "summary", "content", "category"]
+              required: ["title", "summary", "content", "category", "image"]
             }
           },
           quotes: {
@@ -525,21 +592,21 @@ export default function Dashboard() {
       }
 
       if (!response.text) {
-        throw new Error("L'IA n'a pas retourné de contenu. Le document est peut-être illisible ou trop court.");
+        throw new Error(t('dashboard_ai_no_content'));
       }
 
       const result = JSON.parse(response.text);
       
       if (!result.articles?.length && !result.quotes?.length) {
-        throw new Error("Aucun contenu pertinent n'a pu être extrait. Essayez avec un autre document ou du texte plus explicite.");
+        throw new Error(t('dashboard_ai_no_relevant_content'));
       }
 
       setAiResult(result);
-      showStatus("Traitement IA terminé avec succès !");
+      showStatus(t('dashboard_ai_process_success'));
     } catch (err: any) {
       console.error("AI Processing Error:", err);
-      setError(err.message || "Erreur lors du traitement IA. Veuillez réessayer.");
-      showStatus(err.message || "Erreur IA", "error");
+      setError(err.message || t('dashboard_ai_process_error'));
+      showStatus(err.message || t('dashboard_ai_error'), "error");
     } finally {
       setIsProcessing(false);
     }
@@ -579,7 +646,7 @@ export default function Dashboard() {
       if (processedCount === filesToProcess.length) {
         if (newFiles.length > 0) {
           setFilesData(prev => [...prev, ...newFiles]);
-          showStatus(`${newFiles.length} fichier(s) ajouté(s)`);
+          showStatus(t('dashboard_files_added', { count: newFiles.length }));
         }
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
@@ -589,7 +656,7 @@ export default function Dashboard() {
 
     filesToProcess.forEach(file => {
       if (file.size > 20 * 1024 * 1024) {
-        showStatus(`Fichier ${file.name} trop lourd (max 20Mo).`, "error");
+        showStatus(t('dashboard_file_too_heavy', { name: file.name }), "error");
         finalize();
         return;
       }
@@ -598,7 +665,7 @@ export default function Dashboard() {
       
       reader.onerror = () => {
         console.error(`Error reading file ${file.name}`);
-        showStatus(`Erreur de lecture : ${file.name}`, "error");
+        showStatus(t('dashboard_file_read_error', { name: file.name }), "error");
         finalize();
       };
 
@@ -616,7 +683,7 @@ export default function Dashboard() {
             });
           } catch (err) {
             console.error("Error reading Word file:", err);
-            showStatus(`Erreur sur ${file.name}`, "error");
+            showStatus(t('dashboard_file_error', { name: file.name }), "error");
           } finally {
             finalize();
           }
@@ -641,7 +708,7 @@ export default function Dashboard() {
             });
           } catch (err) {
             console.error("Error reading Excel file:", err);
-            showStatus(`Erreur sur ${file.name}`, "error");
+            showStatus(t('dashboard_file_error', { name: file.name }), "error");
           } finally {
             finalize();
           }
@@ -725,8 +792,10 @@ export default function Dashboard() {
       if (type === 'article') {
         await addDoc(collection(db, 'articles'), {
           ...data,
+          excerpt: data.summary || data.excerpt || "",
+          image: data.image || `https://picsum.photos/seed/${encodeURIComponent(data.title || 'article')}/800/600`,
           author: "WIL Editorial AI",
-          date: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
+          date: new Date().toLocaleDateString(t('date_locale') || 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
           createdAt: serverTimestamp()
         });
       } else if (type === 'section') {
@@ -748,9 +817,60 @@ export default function Dashboard() {
       
       setSeedStatus(t('dashboard_seed_success'));
       showStatus(t('dashboard_ai_inject'));
-    } catch (err) {
+    } catch (err: any) {
       console.error("Injection Error:", err);
       setSeedStatus(t('dashboard_seed_error'));
+      showStatus(t('dashboard_inject_error', { error: err.message }), "error");
+    } finally {
+      setSeeding(false);
+      setTimeout(() => setSeedStatus(null), 3000);
+    }
+  };
+
+  const handleInjectAllAiData = async () => {
+    if (!aiResult) return;
+    
+    if (!profile || (profile.role !== 'admin' && profile.role !== 'super-admin')) {
+      setSeedStatus(t('dashboard_unauthorized_domain'));
+      return;
+    }
+    
+    setSeeding(true);
+    setSeedStatus(t('dashboard_ai_processing'));
+    try {
+      let count = 0;
+      if (aiResult.articles && aiResult.articles.length > 0) {
+        for (const article of aiResult.articles) {
+          await addDoc(collection(db, 'articles'), {
+            ...article,
+            excerpt: article.summary || article.excerpt || "",
+            image: article.image || `https://picsum.photos/seed/${encodeURIComponent(article.title || 'article')}/800/600`,
+            author: "WIL Editorial AI",
+            date: new Date().toLocaleDateString(t('date_locale') || 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
+            createdAt: serverTimestamp()
+          });
+          count++;
+        }
+      }
+      
+      if (aiResult.quotes && aiResult.quotes.length > 0) {
+        for (const quote of aiResult.quotes) {
+          const quoteText = quote.text && quote.author ? `"${quote.text}" — ${quote.author}` : (quote.text || quote.content?.text);
+          await addDoc(collection(db, 'announcements'), {
+            text: quoteText,
+            isActive: true,
+            createdAt: serverTimestamp()
+          });
+          count++;
+        }
+      }
+      
+      setSeedStatus(t('dashboard_seed_success'));
+      showStatus(t('dashboard_items_injected_success', { count }));
+    } catch (err: any) {
+      console.error("Injection All Error:", err);
+      setSeedStatus(t('dashboard_seed_error'));
+      showStatus(t('dashboard_inject_multiple_error', { error: err.message }), "error");
     } finally {
       setSeeding(false);
       setTimeout(() => setSeedStatus(null), 3000);
@@ -930,7 +1050,7 @@ export default function Dashboard() {
       await addDoc(collection(db, 'custom_sections'), gallerySection);
 
       // NEW SECTIONS FROM USER REQUEST
-      setSeedStatus("Seeding des nouvelles sections premium...");
+      setSeedStatus(t('dashboard_seeding_premium_sections'));
       
       const premiumSections = [
         {
@@ -1054,7 +1174,7 @@ export default function Dashboard() {
       } else if (err.code === 'auth/popup-blocked') {
         setError(t('dashboard_popup_blocked'));
       } else {
-        setError(t('dashboard_login_error') + (err.message || 'Erreur inconnue'));
+        setError(t('dashboard_login_error') + (err.message || t('dashboard_unknown_error')));
       }
     }
   };
@@ -1090,7 +1210,7 @@ export default function Dashboard() {
         text: editingAnnouncement.text
       });
       setEditingAnnouncement(null);
-      showStatus("Annonce mise à jour !");
+      showStatus(t('dashboard_announcement_updated'));
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, `announcements/${editingAnnouncement.id}`);
     }
@@ -1106,12 +1226,12 @@ export default function Dashboard() {
         await updateDoc(userRef, {
           favorites: arrayRemove(itemId)
         });
-        toast.success("Retiré de vos favoris");
+        toast.success(t('dashboard_removed_from_favorites'));
       } else {
         await updateDoc(userRef, {
           favorites: arrayUnion(itemId)
         });
-        toast.success("Ajouté à vos favoris");
+        toast.success(t('dashboard_added_to_favorites'));
       }
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, `users/${user.uid}`);
@@ -1122,7 +1242,7 @@ export default function Dashboard() {
     try {
       const settingsRef = doc(db, 'settings', 'marquee');
       await setDoc(settingsRef, { speed }, { merge: true });
-      showStatus(`Vitesse du bandeau mise à jour : ${speed}s`);
+      showStatus(t('dashboard_marquee_speed_updated', { speed }));
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, 'settings/marquee');
     }
@@ -1131,12 +1251,12 @@ export default function Dashboard() {
   const handleDeleteMedia = async (id: string) => {
     setConfirmModal({
       isOpen: true,
-      title: "Supprimer le média",
-      message: "Voulez-vous vraiment supprimer ce média définitivement ?",
+      title: t('dashboard_delete_media'),
+      message: t('dashboard_delete_media_confirm'),
       onConfirm: async () => {
         try {
           await deleteDoc(doc(db, 'media', id));
-          showStatus("Média supprimé.");
+          showStatus(t('dashboard_media_deleted'));
         } catch (error) {
           handleFirestoreError(error, OperationType.DELETE, `media/${id}`);
         }
@@ -1147,7 +1267,7 @@ export default function Dashboard() {
 
   const copyMediaUrl = (data: string) => {
     navigator.clipboard.writeText(data);
-    showStatus("Lien copié dans le presse-papier !");
+    showStatus(t('dashboard_link_copied'));
   };
 
   const handleAddAnnouncement = async () => {
@@ -1160,7 +1280,7 @@ export default function Dashboard() {
       });
       setNewAnnouncement('');
       setIsAddingAnnouncement(false);
-      showStatus("Annonce ajoutée !");
+      showStatus(t('dashboard_announcement_added'));
     } catch (error) {
       handleFirestoreError(error, OperationType.WRITE, 'announcements');
     }
@@ -1313,6 +1433,15 @@ export default function Dashboard() {
                       <Bookmark size={16} /> {t('magazines')}
                     </button>
                     <button 
+                      onClick={() => setActiveTab('events-mgmt')}
+                      className={cn(
+                        "w-full flex items-center gap-3 p-3 transition-all",
+                        activeTab === 'events-mgmt' ? "bg-white shadow-sm text-burgundy" : "hover:bg-white"
+                      )}
+                    >
+                      <Calendar size={16} /> {t('events') || 'Évènements'}
+                    </button>
+                    <button 
                       onClick={() => setActiveTab('reservations-mgmt')}
                       className={cn(
                         "w-full flex items-center gap-3 p-3 transition-all",
@@ -1444,11 +1573,14 @@ export default function Dashboard() {
           ) : activeTab === 'settings-mgmt' ? (
             <div className="space-y-8">
               <h2 className="text-3xl font-serif">{t('dashboard_general_settings')}</h2>
-              <div className="max-w-2xl space-y-6">
-                <div className="bg-white p-8 border border-gray-100 shadow-sm space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                {/* General Settings */}
+                <div className="bg-white p-8 border border-gray-100 shadow-sm space-y-6 self-start">
+                  <h3 className="font-serif text-2xl border-b border-gray-100 pb-4">Configuration Générale</h3>
                   <div className="space-y-2">
                     <label className="text-[10px] uppercase tracking-widest font-bold">{t('dashboard_platform_name')}</label>
-                    <input type="text" defaultValue="Women Impact - Excellence & Leadership Féminin" className="w-full p-3 border border-gray-100 text-sm" />
+                    <input type="text" defaultValue="Women In Leadership" className="w-full p-3 border border-gray-100 text-sm" />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] uppercase tracking-widest font-bold">{t('dashboard_whatsapp_contact')}</label>
@@ -1460,6 +1592,75 @@ export default function Dashboard() {
                   </div>
                   <button className="btn-gold px-8 py-3">{t('dashboard_save_settings')}</button>
                 </div>
+
+                {/* Magazine Editorial Settings */}
+                <div className="bg-white p-8 border border-gray-100 shadow-sm space-y-6">
+                  <h3 className="font-serif text-2xl border-b border-gray-100 pb-4">Éditorial du Magazine</h3>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest font-bold">{t('dashboard_title')}</label>
+                      <input 
+                        type="text" 
+                        value={magazineEditorial.title}
+                        onChange={(e) => setMagazineEditorial({...magazineEditorial, title: e.target.value})}
+                        className="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none" 
+                        placeholder="Ex: Le mot de la directrice"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest font-bold">{t('dashboard_author')}</label>
+                        <input 
+                          type="text" 
+                          value={magazineEditorial.author}
+                          onChange={(e) => setMagazineEditorial({...magazineEditorial, author: e.target.value})}
+                          className="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] uppercase tracking-widest font-bold">Rôle</label>
+                        <input 
+                          type="text" 
+                          value={magazineEditorial.role}
+                          onChange={(e) => setMagazineEditorial({...magazineEditorial, role: e.target.value})}
+                          className="w-full p-3 border border-gray-100 text-sm focus:border-gold outline-none" 
+                          placeholder="Ex: Directrice de Publication"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest font-bold">Image de l'auteur</label>
+                      <ImageUploader 
+                        label="Upload Image"
+                        currentUrl={magazineEditorial.image}
+                        onUploadSuccess={(url) => setMagazineEditorial({...magazineEditorial, image: url})}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-end">
+                        <label className="text-[10px] uppercase tracking-widest font-bold">{t('dashboard_content')}</label>
+                      </div>
+                      <RichTextEditor 
+                        value={magazineEditorial.content}
+                        onChange={(val) => setMagazineEditorial({...magazineEditorial, content: val})}
+                      />
+                    </div>
+                    <button 
+                      onClick={async () => {
+                        try {
+                          await setDoc(doc(db, 'settings', 'magazineEditorial'), magazineEditorial);
+                          showStatus(t('update_success'));
+                        } catch (e) {
+                          handleFirestoreError(e, OperationType.WRITE, 'settings/magazineEditorial');
+                        }
+                      }}
+                      className="btn-gold px-8 py-3 w-full"
+                    >
+                      Enregistrer l'éditorial
+                    </button>
+                  </div>
+                </div>
+
               </div>
             </div>
           ) : activeTab === 'page-builder' ? (
@@ -1542,12 +1743,30 @@ export default function Dashboard() {
             <div className="space-y-8">
               <div className="flex justify-between items-center">
                 <h2 className="text-3xl font-serif">{t('dashboard_articles_mgmt')}</h2>
-                <button 
-                  onClick={() => setActiveTab('ai-editorial')}
-                  className="btn-gold px-6 py-2 text-[10px]"
-                >
-                  {t('dashboard_new_article')}
-                </button>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => {
+                      setEditingArticle({
+                        title: '',
+                        category: 'Leadership',
+                        readTime: '',
+                        summary: '',
+                        content: '',
+                        image: ''
+                      });
+                      setIsArticleModalOpen(true);
+                    }}
+                    className="bg-white border border-gold text-gold hover:bg-gold/5 px-6 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors"
+                  >
+                    Nouveau (Manuel)
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('ai-editorial')}
+                    className="btn-gold px-6 py-2 text-[10px]"
+                  >
+                    Nouveau (AI Éditorial)
+                  </button>
+                </div>
               </div>
               <div className="bg-white border border-gray-100 shadow-sm overflow-hidden">
                 <table className="w-full text-left text-xs">
@@ -1567,6 +1786,13 @@ export default function Dashboard() {
                         <td className="p-4">{article.author}</td>
                         <td className="p-4 flex gap-2">
                           <button 
+                            onClick={() => setImageUploadArticle(article)}
+                            className="p-2 hover:text-gold transition-colors"
+                            title={t('dashboard_upload_image')}
+                          >
+                            <Image size={14} />
+                          </button>
+                          <button 
                             onClick={() => handleEditArticle(article)}
                             className="p-2 hover:text-gold transition-colors"
                           >
@@ -1576,7 +1802,7 @@ export default function Dashboard() {
                             onClick={() => handleDeleteItem('articles', article.id)}
                             className="p-2 hover:text-red-500 transition-colors"
                           >
-                            <History size={14} />
+                            <Trash2 size={14} />
                           </button>
                         </td>
                       </tr>
@@ -1589,9 +1815,32 @@ export default function Dashboard() {
                   </tbody>
                 </table>
               </div>
-            </div>
-          ) : activeTab === 'tv-mgmt' ? (
-            <div className="space-y-8">
+
+              {imageUploadArticle && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="bg-white w-full max-w-md p-8 relative"
+                  >
+                    <button onClick={() => setImageUploadArticle(null)} className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors">
+                      <XCircle size={24} />
+                    </button>
+                    <h3 className="text-2xl font-serif mb-6">{t('dashboard_upload_image')}</h3>
+                    <p className="text-xs text-gray-500 mb-6">{imageUploadArticle.title}</p>
+                    <ImageUploader 
+                      label={t('dashboard_cover_image')}
+                      currentUrl={imageUploadArticle.image}
+                      onUploadSuccess={(url) => {
+                        if (url) {
+                          handleQuickImageUpload(imageUploadArticle.id, url);
+                        }
+                      }}
+                    />
+                  </motion.div>
+                </div>
+              )}
+
               {isArticleModalOpen && editingArticle && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                   <motion.div 
@@ -1600,7 +1849,7 @@ export default function Dashboard() {
                     className="bg-white w-full max-w-4xl max-h-[90vh] overflow-y-auto"
                   >
                     <div className="p-8 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
-                      <h3 className="text-2xl font-serif">{t('dashboard_edit_article')}</h3>
+                      <h3 className="text-2xl font-serif">{editingArticle.id ? t('dashboard_edit_article') : 'Nouvel Article (Manuel)'}</h3>
                       <button onClick={() => setIsArticleModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <XCircle size={24} />
                       </button>
@@ -1611,16 +1860,17 @@ export default function Dashboard() {
                         <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_title')}</label>
                         <input 
                           type="text" 
-                          value={editingArticle.title}
+                          value={editingArticle.title || ''}
                           onChange={(e) => setEditingArticle({...editingArticle, title: e.target.value})}
                           className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold"
+                          required
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_category')}</label>
                           <select 
-                            value={editingArticle.category}
+                            value={editingArticle.category || 'Leadership'}
                             onChange={(e) => setEditingArticle({...editingArticle, category: e.target.value})}
                             className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold"
                           >
@@ -1635,26 +1885,42 @@ export default function Dashboard() {
                           <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_read_time')}</label>
                           <input 
                             type="text" 
-                            value={editingArticle.readTime}
+                            value={editingArticle.readTime || ''}
                             onChange={(e) => setEditingArticle({...editingArticle, readTime: e.target.value})}
                             className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold"
+                            placeholder="ex: 5 min"
                           />
                         </div>
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_summary')}</label>
                         <textarea 
-                          value={editingArticle.summary}
+                          value={editingArticle.summary || ''}
                           onChange={(e) => setEditingArticle({...editingArticle, summary: e.target.value})}
                           className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold h-24"
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_content')}</label>
+                        <div className="flex justify-between items-end">
+                          <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_content')}</label>
+                          <div className="flex items-center gap-4">
+                            <span className="text-[10px] text-gray-500">
+                              {t('dashboard_media_library_tip')}<code className="bg-gray-100 px-1">![description](lien_image)</code>
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() => setIsMediaLibraryOpen(true)}
+                                className="text-[10px] uppercase tracking-widest font-bold text-gold hover:text-burgundy transition-colors underline"
+                            >
+                                Ouvrir la Médiathèque
+                            </button>
+                          </div>
+                        </div>
                         <textarea 
-                          value={editingArticle.content}
+                          value={editingArticle.content || ''}
                           onChange={(e) => setEditingArticle({...editingArticle, content: e.target.value})}
-                          className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold h-64"
+                          className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold h-64 font-mono text-sm"
+                          required
                         />
                       </div>
                       <ImageUploader 
@@ -1670,7 +1936,9 @@ export default function Dashboard() {
                   </motion.div>
                 </div>
               )}
-
+            </div>
+          ) : activeTab === 'tv-mgmt' ? (
+            <div className="space-y-8">
               <div className="flex justify-between items-center">
                 <h2 className="text-3xl font-serif">{t('dashboard_tv_mgmt')}</h2>
                 <button 
@@ -2000,7 +2268,7 @@ export default function Dashboard() {
                           className="p-2 hover:text-red-500 transition-colors"
                           title={t('dashboard_delete')}
                         >
-                          <History size={14} />
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </div>
@@ -2036,7 +2304,7 @@ export default function Dashboard() {
                   <input 
                     type="range" 
                     min="10" 
-                    max="100" 
+                    max="200" 
                     step="5"
                     value={marqueeSettings.speed} 
                     onChange={(e) => handleUpdateMarqueeSpeed(parseInt(e.target.value))}
@@ -2132,7 +2400,7 @@ export default function Dashboard() {
                               onClick={() => handleAnnounceAction(a.id, 'delete')}
                               className="p-2 hover:text-red-500 transition-colors"
                             >
-                              <History size={14} />
+                              <Trash2 size={14} />
                             </button>
                           </div>
                         </td>
@@ -2164,9 +2432,9 @@ export default function Dashboard() {
                 {/* Input Section */}
                 <div className="space-y-8">
                   <div className="bg-black-rich p-10 text-white shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full -mr-32 -mt-32 blur-3xl" />
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full -mr-32 -mt-32 blur-3xl pointer-events-none" />
                     
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center justify-between mb-8 relative z-10">
                       <h3 className="text-2xl font-serif flex items-center gap-3">
                         <FileText className="text-gold" />
                         {t('dashboard_source')}
@@ -2198,10 +2466,10 @@ export default function Dashboard() {
                         value={aiInput}
                         onChange={(e) => setAiInput(e.target.value)}
                         placeholder={t('dashboard_ai_text_placeholder')}
-                        className="w-full h-80 bg-white/5 border border-white/10 p-6 text-gray-300 focus:outline-none focus:border-gold transition-all font-serif italic text-lg mb-8"
+                        className="w-full h-80 bg-white/5 border border-white/10 p-6 text-gray-300 focus:outline-none focus:border-gold transition-all font-serif italic text-lg mb-8 relative z-10"
                       />
                     ) : (
-                      <div className="space-y-6">
+                      <div className="space-y-6 relative z-10">
                         <div 
                           onClick={() => fileInputRef.current?.click()}
                           onDragOver={handleDragOver}
@@ -2311,7 +2579,12 @@ export default function Dashboard() {
                     <div className="space-y-8">
                       <div className="p-4 bg-gold/10 border border-gold/20 flex items-center justify-between">
                         <span className="text-[10px] uppercase tracking-widest font-bold text-gold">{t('dashboard_analysis_results')}</span>
-                        <button className="text-[10px] uppercase tracking-widest font-bold text-gold hover:underline">{t('dashboard_inject_all')}</button>
+                        <button 
+                          onClick={handleInjectAllAiData}
+                          className="text-[10px] uppercase tracking-widest font-bold text-gold hover:underline"
+                        >
+                          {t('dashboard_inject_all')}
+                        </button>
                       </div>
 
                       {aiResult.articles?.map((article: any, idx: number) => (
@@ -2463,7 +2736,7 @@ export default function Dashboard() {
                               className="p-2 text-gray-400 hover:text-red-600 transition-colors"
                               title={t('dashboard_delete')}
                             >
-                              <History size={16} />
+                              <Trash2 size={16} />
                             </button>
                           </div>
                         </td>
@@ -2542,6 +2815,8 @@ export default function Dashboard() {
               className="space-y-8"
             >
               <h2 className="text-4xl font-serif mb-12">{t('dashboard_magazine_mgmt')}</h2>
+              
+              {/* Add New Magazine Section */}
               <div className="bg-black-rich p-10 text-white shadow-2xl">
                 <h3 className="text-2xl font-serif mb-6">{t('dashboard_add_new_issue')}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -2582,6 +2857,114 @@ export default function Dashboard() {
                 >
                   {isPublishingMagazine ? <Loader2 className="animate-spin mx-auto" /> : t('dashboard_publish_issue')}
                 </button>
+              </div>
+
+              {/* Magazines List Section */}
+              <div className="bg-white p-10 border border-gray-100 shadow-sm mt-8">
+                <h3 className="text-2xl font-serif mb-6">Numéros existants</h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="border-b border-gray-100 text-[10px] uppercase tracking-widest text-gray-400">
+                        <th className="p-4 font-bold">Image</th>
+                        <th className="p-4 font-bold">{t('dashboard_magazine_title')}</th>
+                        <th className="p-4 font-bold">{t('dashboard_magazine_date')}</th>
+                        <th className="p-4 font-bold">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {magazines.map((magazine) => (
+                        <tr key={magazine.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+                          <td className="p-4">
+                            <div className="w-12 h-16 bg-gray-100">
+                              <img src={magazine.coverImage} className="w-full h-full object-cover" alt="Cover" referrerPolicy="no-referrer" />
+                            </div>
+                          </td>
+                          <td className="p-4 font-medium">{magazine.title}</td>
+                          <td className="p-4">{magazine.issueDate}</td>
+                          <td className="p-4 flex gap-2 items-center">
+                            <a 
+                              href={magazine.pdfUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="p-2 hover:text-gold transition-colors"
+                              title="Voir le PDF"
+                            >
+                              <ExternalLink size={14} />
+                            </a>
+                            <button 
+                              onClick={() => handleDeleteItem('magazines', magazine.id)}
+                              className="p-2 hover:text-red-500 transition-colors"
+                              title="Supprimer le magazine"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {magazines.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className="p-8 text-center text-gray-400 italic">{t('dashboard_no_magazines')}</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </motion.div>
+          ) : activeTab === 'events-mgmt' ? (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-8"
+            >
+              <div className="flex justify-between items-end mb-12">
+                <h2 className="text-4xl font-serif">Gestion des Évènements</h2>
+                <button 
+                  onClick={() => setIsEventModalOpen(true)}
+                  className="btn-gold flex items-center gap-2"
+                >
+                  <Calendar size={16} /> Ajouter un évènement
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {events.map((event) => (
+                  <div key={event.id} className="bg-white border border-gray-100 p-4 shadow-sm group">
+                    <div className="aspect-[4/3] bg-gray-100 mb-4 overflow-hidden relative">
+                      <img src={event.image || 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80'} className="w-full h-full object-cover" alt={event.title} referrerPolicy="no-referrer" />
+                      <div className="absolute top-2 left-2 bg-white px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-burgundy shadow-sm">
+                        {event.date}
+                      </div>
+                    </div>
+                    <h3 className="font-bold text-lg mb-2">{event.title}</h3>
+                    <p className="text-xs text-gray-500 mb-4 truncate">{event.location}</p>
+                    <div className="flex justify-between items-center text-[10px] text-gray-400">
+                      <div className="flex items-center gap-2 text-gold">
+                        <span className="font-bold">{event.price}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <button 
+                          onClick={() => handleEditEvent(event)}
+                          className="p-2 hover:text-gold transition-colors"
+                        >
+                          {t('dashboard_edit')}
+                        </button>
+                        <button 
+                          onClick={() => handleDeleteItem('events', event.id)}
+                          className="p-2 hover:text-red-500 transition-colors"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {events.length === 0 && (
+                  <div className="col-span-full py-20 text-center text-gray-400 italic">
+                    Aucun évènement programmé.
+                  </div>
+                )}
               </div>
             </motion.div>
           ) : activeTab === 'media-mgmt' ? (
@@ -2671,7 +3054,7 @@ export default function Dashboard() {
                   {media.length === 0 && (
                     <div className="col-span-full py-20 text-center bg-gray-50 border border-dashed border-gray-200 rounded-lg">
                       <Image size={48} className="mx-auto text-gray-300 mb-4 opacity-20" />
-                      <p className="text-gray-400 font-serif italic">Votre bibliothèque est vide.</p>
+                      <p className="text-gray-400 font-serif italic">{t('dashboard_empty_library')}</p>
                     </div>
                   )}
                 </div>
@@ -2698,10 +3081,13 @@ export default function Dashboard() {
                         <div className="flex items-center gap-4">
                           <div className="w-20 h-20 bg-gray-100 rounded-sm overflow-hidden">
                             <img 
-                              src={article ? article.image : video.thumbnail} 
+                              src={article ? (article.image || `https://picsum.photos/seed/${article.id}/800/600`) : (video.thumbnail || `https://picsum.photos/seed/${video.id}/800/600`)} 
                               alt={item.title} 
                               className="w-full h-full object-cover" 
                               referrerPolicy="no-referrer"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = `https://picsum.photos/seed/${favId}/800/600`;
+                              }}
                             />
                           </div>
                           <div>
@@ -2929,11 +3315,25 @@ export default function Dashboard() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_summary_content')}</label>
+                      <div className="flex justify-between items-end">
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_summary_content')}</label>
+                        <div className="flex items-center gap-4">
+                            <span className="text-[10px] text-gray-500">
+                                {t('dashboard_media_library_tip')}<code className="bg-gray-100 px-1">![description](lien_image)</code>
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() => setIsMediaLibraryOpen(true)}
+                                className="text-[10px] uppercase tracking-widest font-bold text-gold hover:text-burgundy transition-colors underline"
+                            >
+                                Ouvrir la Médiathèque
+                            </button>
+                          </div>
+                      </div>
                       <textarea 
                         value={editingItem.data.content || editingItem.data.summary}
                         onChange={(e) => setEditingItem({...editingItem, data: {...editingItem.data, content: e.target.value, summary: e.target.value}})}
-                        className="w-full p-3 border border-gray-100 focus:border-gold outline-none h-40 text-sm leading-relaxed"
+                        className="w-full p-3 border border-gray-100 focus:border-gold outline-none h-40 font-mono text-sm leading-relaxed"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -2955,6 +3355,13 @@ export default function Dashboard() {
                           className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
                         />
                       </div>
+                    </div>
+                    <div className="space-y-2">
+                      <ImageUploader 
+                        label={t('dashboard_cover_image')}
+                        currentUrl={editingItem.data.image}
+                        onUploadSuccess={(url) => setEditingItem({...editingItem, data: {...editingItem.data, image: url}})}
+                      />
                     </div>
                   </>
                 ) : (
@@ -2983,6 +3390,114 @@ export default function Dashboard() {
               <div className="p-6 border-t border-gray-100 flex justify-end gap-4 bg-gray-50">
                 <button onClick={() => setEditingItem(null)} className="px-6 py-2 text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black-rich transition-colors">{t('dashboard_cancel')}</button>
                 <button onClick={handleUpdateAiItem} className="btn-gold px-8 py-2">{t('dashboard_save_changes')}</button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit Event Modal */}
+      <AnimatePresence>
+        {isEventModalOpen && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+            >
+              <div className="p-6 border-b border-gray-100 flex justify-between items-center relative z-10 bg-white">
+                <h3 className="text-xl font-serif">
+                  {editingEvent ? "Modifier l'Évènement" : "Ajouter un Évènement"}
+                </h3>
+                <button onClick={() => { setIsEventModalOpen(false); setEditingEvent(null); }} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                  <XCircle size={20} />
+                </button>
+              </div>
+              
+              <div className="p-8 space-y-6 overflow-y-auto flex-grow">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Titre de l'évènement</label>
+                    <input 
+                      type="text" 
+                      value={newEventData.title}
+                      onChange={(e) => setNewEventData({...newEventData, title: e.target.value})}
+                      className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Catégorie</label>
+                      <input 
+                        type="text" 
+                        value={newEventData.category}
+                        onChange={(e) => setNewEventData({...newEventData, category: e.target.value})}
+                        className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
+                        placeholder="Ex: Conférence, Gala..."
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Date</label>
+                      <input 
+                        type="text" 
+                        value={newEventData.date}
+                        onChange={(e) => setNewEventData({...newEventData, date: e.target.value})}
+                        className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
+                        placeholder="Ex: 15 Octobre 2026"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Lieu</label>
+                      <input 
+                        type="text" 
+                        value={newEventData.location}
+                        onChange={(e) => setNewEventData({...newEventData, location: e.target.value})}
+                        className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
+                        placeholder="Ex: Paris, France"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Prix</label>
+                      <input 
+                        type="text" 
+                        value={newEventData.price}
+                        onChange={(e) => setNewEventData({...newEventData, price: e.target.value})}
+                        className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
+                        placeholder="Ex: 50€ ou Gratuit"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Description</label>
+                    <textarea 
+                      value={newEventData.description}
+                      onChange={(e) => setNewEventData({...newEventData, description: e.target.value})}
+                      className="w-full p-3 border border-gray-100 focus:border-gold outline-none h-32 text-sm leading-relaxed"
+                      placeholder="Description détaillée de l'évènement..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <ImageUploader 
+                      label="Image Principale"
+                      currentUrl={newEventData.image}
+                      onUploadSuccess={(url) => setNewEventData({...newEventData, image: url})}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-6 border-t border-gray-100 flex justify-end gap-4 bg-gray-50 relative z-10">
+                <button onClick={() => { setIsEventModalOpen(false); setEditingEvent(null); }} className="px-6 py-2 text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black-rich transition-colors">{t('dashboard_cancel')}</button>
+                <button onClick={handleSaveEvent} className="btn-gold px-8 py-2">
+                  {editingEvent ? t('dashboard_save_changes') : 'Ajouter'}
+                </button>
               </div>
             </motion.div>
           </div>

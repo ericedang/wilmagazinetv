@@ -18,6 +18,15 @@ async function startServer() {
 
   app.use(express.json());
 
+  // Set Content Security Policy headers
+  app.use((req, res, next) => {
+    res.setHeader(
+      "Content-Security-Policy",
+      "default-src 'self' https: wss: data: blob: 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; img-src 'self' data: blob: https: http:; connect-src 'self' https: wss:; frame-src 'self' https:;"
+    );
+    next();
+  });
+
   // Stripe Checkout Session Endpoint
   app.post("/api/create-checkout-session", async (req, res) => {
     if (!stripe) {
