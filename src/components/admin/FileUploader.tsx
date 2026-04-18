@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FileText, Loader2, Check, X, Upload, Copy, Link, Search } from 'lucide-react';
-import { db, auth, storage, ref, uploadBytesResumable, getDownloadURL } from '../../firebase';
+import { db, auth } from '../../firebase';
 import { collection, addDoc, serverTimestamp, getDocs, query, orderBy } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -70,8 +70,8 @@ export default function FileUploader({ onUploadSuccess, currentUrl, label, accep
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 20 * 1024 * 1024) { 
-      setError('Fichier trop lourd (Limité à 20Mo). Utilisez un lien externe ou compressez le fichier.');
+    if (file.size > 10 * 1024 * 1024) { // Cloudinary free unsigned tier limit is 10MB
+      setError('Fichier trop lourd (Limité à 10Mo). Utilisez un lien externe ou compressez le fichier.');
       return;
     }
 
@@ -79,61 +79,59 @@ export default function FileUploader({ onUploadSuccess, currentUrl, label, accep
     setProgress(10);
     setError(null);
 
-    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-
     try {
-      if (!auth.currentUser) {
-        throw new Error("Vous devez être connecté pour uploader un fichier.");
+      // Cloudinary configuration
+      const cloudName = 'dih0ch67r';
+      const uploadPreset = 'ml_default';
+      // Use 'raw' instead of 'auto' for PDFs so they aren't processed as images, avoiding the 401 Delivery error.
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/${isPdf ? 'raw' : 'auto'}/upload`;
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', uploadPreset);
+      
+      setProgress(30);
+      
+      // Upload to Cloudinary
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error?.message || 'Upload failed');
       }
-
-      // Encode filename safely
-      const safeFileName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')}`;
-      const storageRef = ref(storage, `uploads/media/${safeFileName}`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progressValue = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setProgress(Math.round(progressValue));
-        },
-        (err) => {
-          console.error("Storage upload error:", err);
-          setError('Erreur Upload: ' + (err.message || 'Le stockage est indisponible.'));
-          setUploading(false);
-        },
-        async () => {
-          // Upload completed successfully, get the download URL
-          try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            
-            // Save metadata to Firestore for the media library
-            await addDoc(collection(db, 'media'), {
-              name: file.name,
-              type: file.type || (isPdf ? 'application/pdf' : 'unknown'),
-              data: downloadURL,
-              owner: auth.currentUser?.uid || 'anonymous',
-              createdAt: serverTimestamp()
-            });
-            
-            setFileName(file.name);
-            setFileUrl(downloadURL);
-            onUploadSuccess(downloadURL);
-            
-            setTimeout(() => {
-              setUploading(false);
-              setProgress(0);
-            }, 500);
-          } catch (metadataError) {
-             console.error("Error saving metadata:", metadataError);
-             setError("Fichier envoyé, mais erreur d'enregistrement dans la médiathèque.");
-             setUploading(false);
-          }
-        }
-      );
+      
+      setProgress(70);
+      
+      const data = await response.json();
+      const downloadURL = data.secure_url;
+      
+      setProgress(90);
+      
+      // Save metadata to Firestore for the media library
+      await addDoc(collection(db, 'media'), {
+        name: file.name,
+        type: file.type || (isPdf ? 'application/pdf' : 'unknown'),
+        data: downloadURL,
+        owner: auth.currentUser?.uid || 'anonymous',
+        createdAt: serverTimestamp()
+      });
+      
+      setFileName(file.name);
+      setFileUrl(downloadURL);
+      onUploadSuccess(downloadURL);
+      setProgress(100);
+      
+      setTimeout(() => {
+        setUploading(false);
+        setProgress(0);
+      }, 500);
     } catch (err: any) {
-      console.error("Upload error:", err);
-      setError('Erreur Upload: ' + (err.message || 'Le stockage est indisponible. Utilisez un lien externe.'));
+      console.error("Cloudinary upload error:", err);
+      setError('Erreur Cloudinary: ' + (err.message || 'Hébergeur non disponible. Utilisez un lien externe.'));
       setUploading(false);
     }
   };
