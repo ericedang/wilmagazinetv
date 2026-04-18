@@ -60,6 +60,7 @@ export default function Dashboard() {
   const [editingArticle, setEditingArticle] = React.useState<any>(null);
   const [imageUploadArticle, setImageUploadArticle] = React.useState<any>(null);
   const [magazineEditorial, setMagazineEditorial] = React.useState({ title: '', author: '', role: '', content: '', image: '' });
+  const [isMediaLibraryOpen, setIsMediaLibraryOpen] = React.useState(false);
   const [editingVideo, setEditingVideo] = React.useState<any>(null);
   const [editingEvent, setEditingEvent] = React.useState<any>(null);
   const [isEventModalOpen, setIsEventModalOpen] = React.useState(false);
@@ -3498,6 +3499,83 @@ export default function Dashboard() {
                 <button onClick={handleSaveEvent} className="btn-gold px-8 py-2">
                   {editingEvent ? t('dashboard_save_changes') : 'Ajouter'}
                 </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Media Library Modal */}
+      <AnimatePresence>
+        {isMediaLibraryOpen && (
+          <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-white w-full max-w-5xl h-[80vh] shadow-2xl rounded-2xl flex flex-col overflow-hidden"
+            >
+              <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h3 className="text-2xl font-serif">Médiathèque</h3>
+                <button onClick={() => setIsMediaLibraryOpen(false)} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
+                  <XCircle size={24} className="text-gray-500" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-8 bg-gray-50">
+                <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm mb-8">
+                  <ImageUploader 
+                    label="Ajouter une nouvelle image"
+                    onUploadSuccess={(url) => {
+                      navigator.clipboard.writeText(`![Image](${url})`);
+                      toast.success('Image téléchargée et lien markdown copié !');
+                    }}
+                  />
+                </div>
+                
+                <h4 className="text-[10px] uppercase tracking-widest font-bold text-gray-400 mb-6">Images Précédentes</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  {media.map((item) => (
+                    <div key={item.id} className="relative group aspect-square bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
+                      {item.type === 'image' ? (
+                        <img src={item.url} alt={item.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-gray-50 text-gray-400 p-4 text-center">
+                          <FileText size={32} className="mb-2" />
+                          <span className="text-[10px] truncate w-full">{item.name}</span>
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 gap-3">
+                        <button 
+                          onClick={() => {
+                            if (item.type === 'image') {
+                              navigator.clipboard.writeText(`![${item.name}](${item.url})`);
+                            } else {
+                              navigator.clipboard.writeText(`[${item.name}](${item.url})`);
+                            }
+                            toast.success('Lien copié ! Vous pouvez le coller dans l\'article.');
+                          }}
+                          className="bg-gold text-white px-4 py-2 text-[10px] uppercase tracking-widest font-bold w-full rounded hover:bg-white hover:text-gold transition-colors text-center"
+                        >
+                          Copier Markdown
+                        </button>
+                        <button 
+                          onClick={() => {
+                            navigator.clipboard.writeText(item.url);
+                            toast.success('Lien direct copié !');
+                          }}
+                          className="bg-white/20 text-white px-4 py-2 text-[10px] uppercase tracking-widest font-bold w-full rounded hover:bg-white/40 transition-colors text-center"
+                        >
+                          Copier URL
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {media.length === 0 && (
+                    <div className="col-span-full py-12 text-center text-gray-400 font-serif">
+                      Aucun média disponible
+                    </div>
+                  )}
+                </div>
               </div>
             </motion.div>
           </div>

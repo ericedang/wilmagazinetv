@@ -102,26 +102,7 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
       {/* Viewer */}
       <div className="flex-grow relative bg-gray-900 overflow-hidden flex flex-col items-center justify-center">
         {isPremium ? (
-          pdfUrl.includes('cloudinary.com') ? (
-            <div className="flex flex-col items-center justify-center p-8 text-center text-white max-w-lg h-full">
-              <AlertCircle size={64} className="text-red-500 mb-6" />
-              <h3 className="text-2xl font-bold mb-4">Ancien Fichier Non Supporté</h3>
-              <p className="text-gray-400 mb-6 text-lg leading-relaxed">
-                Ce fichier PDF est hébergé sur un ancien système (Cloudinary) qui bloque désormais la lecture par mesure de sécurité.
-              </p>
-              {profile?.role === 'admin' || profile?.role === 'super-admin' ? (
-                <div className="bg-black/50 p-6 rounded-lg border border-red-500/30">
-                  <p className="text-white font-medium mb-4">Action requise (Administrateur) :</p>
-                  <ol className="text-left text-sm text-gray-300 list-decimal pl-5 space-y-2">
-                    <li>Fermez cette fenêtre.</li>
-                    <li>Allez dans le Dashboard &gt; Magazines.</li>
-                    <li>Modifiez ce magazine.</li>
-                    <li>Re-téléversez le fichier PDF.</li>
-                  </ol>
-                </div>
-              ) : null}
-            </div>
-          ) : drivePreviewUrl ? (
+          drivePreviewUrl ? (
             <iframe 
               src={drivePreviewUrl} 
               className="w-full h-full border-none" 
