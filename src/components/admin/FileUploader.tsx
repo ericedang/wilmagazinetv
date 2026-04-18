@@ -84,7 +84,8 @@ export default function FileUploader({ onUploadSuccess, currentUrl, label, accep
       const cloudName = 'dih0ch67r';
       const uploadPreset = 'ml_default';
       // Use 'raw' instead of 'auto' for PDFs so they aren't processed as images, avoiding the 401 Delivery error.
-      const url = `https://api.cloudinary.com/v1_1/${cloudName}/${file.type === 'application/pdf' ? 'raw' : 'auto'}/upload`;
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/${isPdf ? 'raw' : 'auto'}/upload`;
 
       const formData = new FormData();
       formData.append('file', file);
@@ -113,7 +114,7 @@ export default function FileUploader({ onUploadSuccess, currentUrl, label, accep
       // Save metadata to Firestore for the media library
       await addDoc(collection(db, 'media'), {
         name: file.name,
-        type: file.type || 'application/pdf',
+        type: file.type || (isPdf ? 'application/pdf' : 'unknown'),
         data: downloadURL,
         owner: auth.currentUser?.uid || 'anonymous',
         createdAt: serverTimestamp()
