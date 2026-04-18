@@ -22,7 +22,7 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
   const navigate = useNavigate();
   const isPremium = profile?.subscriptionStatus === 'premium' || profile?.role === 'admin' || profile?.role === 'super-admin' || profile?.role === 'editor';
 
-  const isObsoletePdfUrl = pdfUrl.includes('cloudinary.com') && pdfUrl.includes('/image/upload/');
+  const isObsoletePdfUrl = pdfUrl.includes('cloudinary.com') && (pdfUrl.includes('/image/upload/') || pdfUrl.includes('/raw/upload/'));
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [isPdfError, setIsPdfError] = useState(isObsoletePdfUrl);
@@ -108,15 +108,15 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
             />
           ) : isPdfError ? (
             <div className="flex flex-col items-center justify-center h-full w-full">
-              {pdfUrl.includes('/image/upload/') ? (
+              {isObsoletePdfUrl ? (
                  <div className="flex flex-col items-center justify-center p-8 text-center text-white max-w-lg">
                    <AlertCircle size={64} className="text-gold mb-6" />
-                   <p className="text-gray-200 mb-4 text-xl font-serif">Format PDF obsolète</p>
+                   <p className="text-gray-200 mb-4 text-xl font-serif">Hébergeur Obsolète (Cloudinary)</p>
                    <p className="text-gray-400 mb-6 text-sm leading-relaxed">
-                     Ce document a été mis en ligne avec une ancienne configuration sécuritaire de Cloudinary et ne peut plus être lu directement. 
+                     L'ancien serveur de documents bloque désormais la livraison des fichiers PDF pour des raisons de sécurité liées à leur politique gratuite.
                    </p>
                    <p className="text-gold mb-6 text-sm font-bold uppercase tracking-widest">
-                     Veuillez le supprimer et le re-téléverser depuis le Dashboard.
+                     Veuillez supprimer ce magazine et re-téléverser le fichier depuis le Dashboard. Le nouveau système est sécurisé et illimité.
                    </p>
                  </div>
               ) : !isFallbackError ? (
