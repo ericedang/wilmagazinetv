@@ -33,21 +33,25 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
   }
 
   function onDocumentLoadError(error: any) {
-    console.warn("React-PDF failed to load, falling back to iframe:", error);
+    console.warn("React-PDF failed to load, falling back to iframe:", error?.message || error);
     setIsPdfError(true);
+  }
+
+  // Cloudinary blocks direct PDF delivery on free tier with 401 unless fl_attachment is used.
+  // We apply this bypass for both reading (React-PDF) and downloading.
+  let safePdfUrl = pdfUrl;
+  let googleDocsFallbackUrl = pdfUrl;
+
+  if (safePdfUrl.includes('cloudinary.com') && safePdfUrl.includes('/upload/')) {
+    if (!safePdfUrl.includes('fl_attachment')) {
+      safePdfUrl = safePdfUrl.replace('/upload/', '/upload/fl_attachment/');
+    }
   }
 
   const handleDownload = (e: React.MouseEvent) => {
     e.preventDefault();
-    let downloadUrl = pdfUrl;
-    // Add Cloudinary attachment flag to force download if it's a cloudinary URL
-    if (downloadUrl.includes('cloudinary.com') && downloadUrl.includes('/upload/')) {
-      downloadUrl = downloadUrl.replace('/upload/', '/upload/fl_attachment/');
-    }
-    
-    // Instead of using the download script which may fail async, trigger direct download
     const link = document.createElement('a');
-    link.href = downloadUrl;
+    link.href = safePdfUrl;
     link.download = `${title}.pdf`;
     link.target = '_blank';
     link.rel = 'noopener noreferrer';
@@ -113,8 +117,8 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
             <div className="flex flex-col items-center justify-center h-full w-full">
               {!isFallbackError ? (
                  <iframe 
-                    src={pdfUrl} 
-                    className="w-full h-full border-none bg-white" 
+                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(googleDocsFallbackUrl)}&embedded=true`} 
+                    className="w-full h-full border-none bg-gray-900" 
                     title={title}
                     onError={() => setIsFallbackError(true)}
                  />
@@ -125,7 +129,7 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
                     Le lecteur ne peut pas afficher directement certains liens externes pour des raisons de sécurité de votre navigateur ou de l'hébergeur.
                   </p>
                   <a 
-                    href={pdfUrl} 
+                    href={safePdfUrl} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="btn-gold flex items-center gap-2"
@@ -140,7 +144,7 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
             <div className="h-full w-full flex flex-col overflow-hidden">
               <div className="flex-grow overflow-y-auto w-full flex justify-center p-4 custom-scrollbar">
                 <Document
-                  file={pdfUrl}
+                  file={safePdfUrl}
                   onLoadSuccess={onDocumentLoadSuccess}
                   onLoadError={onDocumentLoadError}
                   loading={

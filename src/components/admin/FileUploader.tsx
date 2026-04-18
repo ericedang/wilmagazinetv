@@ -83,7 +83,8 @@ export default function FileUploader({ onUploadSuccess, currentUrl, label, accep
       // Cloudinary configuration
       const cloudName = 'dih0ch67r';
       const uploadPreset = 'ml_default';
-      const url = `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`;
+      // Use 'raw' instead of 'auto' for PDFs so they aren't processed as images, avoiding the 401 Delivery error.
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/${file.type === 'application/pdf' ? 'raw' : 'auto'}/upload`;
 
       const formData = new FormData();
       formData.append('file', file);

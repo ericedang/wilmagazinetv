@@ -20,6 +20,7 @@ import { arrayUnion, arrayRemove } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
 
 import { downloadFile } from '../lib/download';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export default function Dashboard() {
   const { user, profile, loading } = useAuth();
@@ -29,8 +30,8 @@ export default function Dashboard() {
   const [error, setError] = React.useState<string | null>(null);
   const [seeding, setSeeding] = React.useState(false);
   const [seedStatus, setSeedStatus] = React.useState<string | null>(null);
-  const [activeTab, setActiveTab] = React.useState<string>('ai-editorial');
-  const [aiInput, setAiInput] = React.useState('');
+  const [activeTab, setActiveTab] = useLocalStorage<string>('dashboard_active_tab', 'ai-editorial');
+  const [aiInput, setAiInput] = useLocalStorage<string>('draft_ai_input', '');
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [aiResult, setAiResult] = React.useState<any>(null);
   const [pendingComments, setPendingComments] = React.useState<any[]>([]);
@@ -48,7 +49,7 @@ export default function Dashboard() {
   const [isArticleModalOpen, setIsArticleModalOpen] = React.useState(false);
   const [selectedSection, setSelectedSection] = React.useState<any>(null);
   const [isPageBuilderEditing, setIsPageBuilderEditing] = React.useState(false);
-  const [magazineData, setMagazineData] = React.useState({ title: '', issueDate: '', pdfUrl: '', coverImage: '' });
+  const [magazineData, setMagazineData] = useLocalStorage('draft_magazine', { title: '', issueDate: '', pdfUrl: '', coverImage: '' });
   const [aiMode, setAiMode] = React.useState<'text' | 'file'>('file');
   const [filesData, setFilesData] = React.useState<{ base64?: string, text?: string, name: string, mimeType: string }[]>([]);
   const [isPublishingMagazine, setIsPublishingMagazine] = React.useState(false);
@@ -57,16 +58,16 @@ export default function Dashboard() {
   const [isVideoModalOpen, setIsVideoModalOpen] = React.useState(false);
   const [editingItem, setEditingItem] = React.useState<{ type: string, data: any, index: number } | null>(null);
   const [editingAnnouncement, setEditingAnnouncement] = React.useState<{ id: string, text: string } | null>(null);
-  const [editingArticle, setEditingArticle] = React.useState<any>(null);
+  const [editingArticle, setEditingArticle] = useLocalStorage<any>('draft_article', null);
   const [imageUploadArticle, setImageUploadArticle] = React.useState<any>(null);
   const [magazineEditorial, setMagazineEditorial] = React.useState({ title: '', author: '', role: '', content: '', image: '' });
   const [isMediaLibraryOpen, setIsMediaLibraryOpen] = React.useState(false);
-  const [editingVideo, setEditingVideo] = React.useState<any>(null);
-  const [editingEvent, setEditingEvent] = React.useState<any>(null);
+  const [editingVideo, setEditingVideo] = useLocalStorage<any>('draft_video', null);
+  const [editingEvent, setEditingEvent] = useLocalStorage<any>('draft_event_edit', null);
   const [isEventModalOpen, setIsEventModalOpen] = React.useState(false);
-  const [newEventData, setNewEventData] = React.useState({ title: '', category: '', date: '', location: '', price: '', image: '', attendees: 0, description: '' });
+  const [newEventData, setNewEventData] = useLocalStorage('draft_event_new', { title: '', category: '', date: '', location: '', price: '', image: '', attendees: 0, description: '' });
   const [marqueeSettings, setMarqueeSettings] = React.useState({ speed: 80 });
-  const [newVideoData, setNewVideoData] = React.useState({ title: '', category: '', duration: '', thumbnail: '', videoUrl: '', description: '' });
+  const [newVideoData, setNewVideoData] = useLocalStorage('draft_video_new', { title: '', category: '', duration: '', thumbnail: '', videoUrl: '', description: '' });
   const [statusMsg, setStatusMsg] = React.useState<{ text: string, type: 'success' | 'error' } | null>(null);
   const [confirmModal, setConfirmModal] = React.useState<{ isOpen: boolean, title: string, message: string, onConfirm: () => void } | null>(null);
 
@@ -1747,14 +1748,16 @@ export default function Dashboard() {
                 <div className="flex gap-2">
                   <button 
                     onClick={() => {
-                      setEditingArticle({
-                        title: '',
-                        category: 'Leadership',
-                        readTime: '',
-                        summary: '',
-                        content: '',
-                        image: ''
-                      });
+                      if (!editingArticle || editingArticle.id) {
+                        setEditingArticle({
+                          title: '',
+                          category: 'Leadership',
+                          readTime: '',
+                          summary: '',
+                          content: '',
+                          image: ''
+                        });
+                      }
                       setIsArticleModalOpen(true);
                     }}
                     className="bg-white border border-gold text-gold hover:bg-gold/5 px-6 py-2 text-[10px] font-bold uppercase tracking-widest transition-colors"
@@ -1862,7 +1865,7 @@ export default function Dashboard() {
                         <input 
                           type="text" 
                           value={editingArticle.title || ''}
-                          onChange={(e) => setEditingArticle({...editingArticle, title: e.target.value})}
+                          onChange={(e) => setEditingArticle(prev => ({...prev, title: e.target.value}))}
                           className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold"
                           required
                         />
@@ -1872,7 +1875,7 @@ export default function Dashboard() {
                           <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_category')}</label>
                           <select 
                             value={editingArticle.category || 'Leadership'}
-                            onChange={(e) => setEditingArticle({...editingArticle, category: e.target.value})}
+                            onChange={(e) => setEditingArticle(prev => ({...prev, category: e.target.value}))}
                             className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold"
                           >
                             <option value="Leadership">Leadership</option>
@@ -1887,7 +1890,7 @@ export default function Dashboard() {
                           <input 
                             type="text" 
                             value={editingArticle.readTime || ''}
-                            onChange={(e) => setEditingArticle({...editingArticle, readTime: e.target.value})}
+                            onChange={(e) => setEditingArticle(prev => ({...prev, readTime: e.target.value}))}
                             className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold"
                             placeholder="ex: 5 min"
                           />
@@ -1897,7 +1900,7 @@ export default function Dashboard() {
                         <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_summary')}</label>
                         <textarea 
                           value={editingArticle.summary || ''}
-                          onChange={(e) => setEditingArticle({...editingArticle, summary: e.target.value})}
+                          onChange={(e) => setEditingArticle(prev => ({...prev, summary: e.target.value}))}
                           className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold h-24"
                         />
                       </div>
@@ -1919,7 +1922,7 @@ export default function Dashboard() {
                         </div>
                         <textarea 
                           value={editingArticle.content || ''}
-                          onChange={(e) => setEditingArticle({...editingArticle, content: e.target.value})}
+                          onChange={(e) => setEditingArticle(prev => ({...prev, content: e.target.value}))}
                           className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold h-64 font-mono text-sm"
                           required
                         />
@@ -1927,7 +1930,7 @@ export default function Dashboard() {
                       <ImageUploader 
                         label={t('dashboard_cover_image')}
                         currentUrl={editingArticle.image}
-                        onUploadSuccess={(url) => setEditingArticle({...editingArticle, image: url})}
+                        onUploadSuccess={(url) => setEditingArticle(prev => ({...prev, image: url}))}
                       />
                       <div className="flex justify-end gap-4 pt-4">
                         <button type="button" onClick={() => setIsArticleModalOpen(false)} className="px-8 py-3 text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black-rich transition-colors">{t('dashboard_cancel')}</button>
@@ -1944,8 +1947,10 @@ export default function Dashboard() {
                 <h2 className="text-3xl font-serif">{t('dashboard_tv_mgmt')}</h2>
                 <button 
                   onClick={() => {
-                    setEditingVideo(null);
-                    setNewVideoData({ title: '', category: '', duration: '', thumbnail: '', videoUrl: '', description: '' });
+                    if (editingVideo) {
+                      setEditingVideo(null);
+                      setNewVideoData({ title: '', category: '', duration: '', thumbnail: '', videoUrl: '', description: '' });
+                    }
                     setIsVideoModalOpen(true);
                   }}
                   className="btn-gold px-6 py-2 text-[10px]"
@@ -1975,7 +1980,7 @@ export default function Dashboard() {
                           <input 
                             type="text" 
                             value={newVideoData.title}
-                            onChange={(e) => setNewVideoData({...newVideoData, title: e.target.value})}
+                            onChange={(e) => setNewVideoData(prev => ({...prev, title: e.target.value}))}
                             className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold"
                             placeholder={t('dashboard_video_title_placeholder')}
                           />
@@ -1985,7 +1990,7 @@ export default function Dashboard() {
                             <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_category')}</label>
                             <select 
                               value={newVideoData.category}
-                              onChange={(e) => setNewVideoData({...newVideoData, category: e.target.value})}
+                              onChange={(e) => setNewVideoData(prev => ({...prev, category: e.target.value}))}
                               className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold"
                             >
                               <option value="">{t('dashboard_select')}</option>
@@ -2000,7 +2005,7 @@ export default function Dashboard() {
                             <input 
                               type="text" 
                               value={newVideoData.duration}
-                              onChange={(e) => setNewVideoData({...newVideoData, duration: e.target.value})}
+                              onChange={(e) => setNewVideoData(prev => ({...prev, duration: e.target.value}))}
                               className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold"
                               placeholder="Ex: 12:45"
                             />
@@ -2010,7 +2015,7 @@ export default function Dashboard() {
                           <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">{t('dashboard_description')}</label>
                           <textarea 
                             value={newVideoData.description}
-                            onChange={(e) => setNewVideoData({...newVideoData, description: e.target.value})}
+                            onChange={(e) => setNewVideoData(prev => ({...prev, description: e.target.value}))}
                             className="w-full p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold h-32"
                             placeholder={t('dashboard_video_desc_placeholder')}
                           />
@@ -2027,7 +2032,7 @@ export default function Dashboard() {
                               <input 
                                 type="text" 
                                 value={newVideoData.videoUrl}
-                                onChange={(e) => setNewVideoData({...newVideoData, videoUrl: e.target.value})}
+                                onChange={(e) => setNewVideoData(prev => ({...prev, videoUrl: e.target.value}))}
                                 className="flex-grow p-4 bg-gray-50 border border-gray-100 focus:outline-none focus:border-gold text-xs"
                                 placeholder={t('dashboard_video_url_placeholder')}
                               />
@@ -2044,7 +2049,7 @@ export default function Dashboard() {
                           <ImageUploader 
                             label={t('dashboard_thumbnail')}
                             currentUrl={newVideoData.thumbnail}
-                            onUploadSuccess={(url) => setNewVideoData({...newVideoData, thumbnail: url})}
+                            onUploadSuccess={(url) => setNewVideoData(prev => ({...prev, thumbnail: url}))}
                           />
                         </div>
 
@@ -2825,18 +2830,20 @@ export default function Dashboard() {
                     <label className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">{t('dashboard_issue_title')}</label>
                     <input 
                       type="text" 
+                      value={magazineData.title}
                       placeholder="Ex: WIL Magazine #12 - Leadership au Féminin" 
                       className="w-full bg-white/5 border border-white/10 p-4 text-white focus:border-gold outline-none" 
-                      onChange={(e) => setMagazineData({ ...magazineData, title: e.target.value })}
+                      onChange={(e) => setMagazineData(prev => ({ ...prev, title: e.target.value }))}
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] uppercase tracking-widest text-gray-400 font-bold">{t('dashboard_issue_date')}</label>
                     <input 
                       type="text" 
+                      value={magazineData.issueDate}
                       placeholder={t('dashboard_issue_date_placeholder')} 
                       className="w-full bg-white/5 border border-white/10 p-4 text-white focus:border-gold outline-none" 
-                      onChange={(e) => setMagazineData({ ...magazineData, issueDate: e.target.value })}
+                      onChange={(e) => setMagazineData(prev => ({ ...prev, issueDate: e.target.value }))}
                     />
                   </div>
                 </div>
@@ -2844,11 +2851,13 @@ export default function Dashboard() {
                   <FileUploader 
                     label={t('dashboard_pdf_file')} 
                     accept=".pdf" 
-                    onUploadSuccess={(url) => setMagazineData({ ...magazineData, pdfUrl: url })} 
+                    currentUrl={magazineData.pdfUrl}
+                    onUploadSuccess={(url) => setMagazineData(prev => ({ ...prev, pdfUrl: url }))} 
                   />
                   <ImageUploader 
                     label={t('dashboard_cover')} 
-                    onUploadSuccess={(url) => setMagazineData({ ...magazineData, coverImage: url })} 
+                    currentUrl={magazineData.coverImage}
+                    onUploadSuccess={(url) => setMagazineData(prev => ({ ...prev, coverImage: url }))} 
                   />
                 </div>
                 <button 
@@ -2922,7 +2931,13 @@ export default function Dashboard() {
               <div className="flex justify-between items-end mb-12">
                 <h2 className="text-4xl font-serif">Gestion des Évènements</h2>
                 <button 
-                  onClick={() => setIsEventModalOpen(true)}
+                  onClick={() => {
+                    if (editingEvent) {
+                      setEditingEvent(null);
+                      setNewEventData({ title: '', category: '', date: '', location: '', price: '', image: '', attendees: 0, description: '' });
+                    }
+                    setIsEventModalOpen(true);
+                  }}
                   className="btn-gold flex items-center gap-2"
                 >
                   <Calendar size={16} /> Ajouter un évènement
@@ -3411,7 +3426,7 @@ export default function Dashboard() {
                 <h3 className="text-xl font-serif">
                   {editingEvent ? "Modifier l'Évènement" : "Ajouter un Évènement"}
                 </h3>
-                <button onClick={() => { setIsEventModalOpen(false); setEditingEvent(null); }} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <button onClick={() => setIsEventModalOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                   <XCircle size={20} />
                 </button>
               </div>
@@ -3423,7 +3438,7 @@ export default function Dashboard() {
                     <input 
                       type="text" 
                       value={newEventData.title}
-                      onChange={(e) => setNewEventData({...newEventData, title: e.target.value})}
+                      onChange={(e) => setNewEventData(prev => ({...prev, title: e.target.value}))}
                       className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
                     />
                   </div>
@@ -3434,7 +3449,7 @@ export default function Dashboard() {
                       <input 
                         type="text" 
                         value={newEventData.category}
-                        onChange={(e) => setNewEventData({...newEventData, category: e.target.value})}
+                        onChange={(e) => setNewEventData(prev => ({...prev, category: e.target.value}))}
                         className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
                         placeholder="Ex: Conférence, Gala..."
                       />
@@ -3444,7 +3459,7 @@ export default function Dashboard() {
                       <input 
                         type="text" 
                         value={newEventData.date}
-                        onChange={(e) => setNewEventData({...newEventData, date: e.target.value})}
+                        onChange={(e) => setNewEventData(prev => ({...prev, date: e.target.value}))}
                         className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
                         placeholder="Ex: 15 Octobre 2026"
                       />
@@ -3457,7 +3472,7 @@ export default function Dashboard() {
                       <input 
                         type="text" 
                         value={newEventData.location}
-                        onChange={(e) => setNewEventData({...newEventData, location: e.target.value})}
+                        onChange={(e) => setNewEventData(prev => ({...prev, location: e.target.value}))}
                         className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
                         placeholder="Ex: Paris, France"
                       />
@@ -3467,7 +3482,7 @@ export default function Dashboard() {
                       <input 
                         type="text" 
                         value={newEventData.price}
-                        onChange={(e) => setNewEventData({...newEventData, price: e.target.value})}
+                        onChange={(e) => setNewEventData(prev => ({...prev, price: e.target.value}))}
                         className="w-full p-3 border border-gray-100 focus:border-gold outline-none text-sm"
                         placeholder="Ex: 50€ ou Gratuit"
                       />
@@ -3478,7 +3493,7 @@ export default function Dashboard() {
                     <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Description</label>
                     <textarea 
                       value={newEventData.description}
-                      onChange={(e) => setNewEventData({...newEventData, description: e.target.value})}
+                      onChange={(e) => setNewEventData(prev => ({...prev, description: e.target.value}))}
                       className="w-full p-3 border border-gray-100 focus:border-gold outline-none h-32 text-sm leading-relaxed"
                       placeholder="Description détaillée de l'évènement..."
                     />
@@ -3488,14 +3503,14 @@ export default function Dashboard() {
                     <ImageUploader 
                       label="Image Principale"
                       currentUrl={newEventData.image}
-                      onUploadSuccess={(url) => setNewEventData({...newEventData, image: url})}
+                      onUploadSuccess={(url) => setNewEventData(prev => ({...prev, image: url}))}
                     />
                   </div>
                 </div>
               </div>
 
               <div className="p-6 border-t border-gray-100 flex justify-end gap-4 bg-gray-50 relative z-10">
-                <button onClick={() => { setIsEventModalOpen(false); setEditingEvent(null); }} className="px-6 py-2 text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black-rich transition-colors">{t('dashboard_cancel')}</button>
+                <button onClick={() => setIsEventModalOpen(false)} className="px-6 py-2 text-[10px] uppercase tracking-widest font-bold text-gray-400 hover:text-black-rich transition-colors">{t('dashboard_cancel')}</button>
                 <button onClick={handleSaveEvent} className="btn-gold px-8 py-2">
                   {editingEvent ? t('dashboard_save_changes') : 'Ajouter'}
                 </button>
