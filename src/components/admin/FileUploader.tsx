@@ -157,7 +157,7 @@ export default function FileUploader({ onUploadSuccess, currentUrl, label, accep
               onClick={() => setIsManualInput(!isManualInput)}
               className="text-[10px] text-gray-400 hover:text-gold uppercase tracking-widest font-bold"
             >
-              {isManualInput ? 'Uploader Fichier' : 'Lien Web'}
+              {isManualInput ? t('dashboard_upload_file', 'Upload File') : t('dashboard_web_link', 'Web Link')}
             </button>
           )}
           <button 
@@ -165,7 +165,7 @@ export default function FileUploader({ onUploadSuccess, currentUrl, label, accep
             onClick={handleOpenMediaLibrary}
             className="text-[10px] flex items-center gap-1 text-gray-400 hover:text-gold uppercase tracking-widest font-bold ml-2"
           >
-            <Search size={10} /> Médiathèque
+            <Search size={10} /> {t('dashboard_media_library', 'Media Library')}
           </button>
         </div>
       </div>
@@ -178,12 +178,12 @@ export default function FileUploader({ onUploadSuccess, currentUrl, label, accep
               type="url" 
               value={manualUrl}
               onChange={(e) => setManualUrl(e.target.value)}
-              placeholder="https://... (Lien Google Drive, etc.)"
+              placeholder="https://..."
               className="flex-grow p-3 border border-gray-200 focus:border-gold outline-none text-sm bg-white"
               required
             />
             <button type="submit" className="btn-gold px-4 py-2 whitespace-nowrap">
-              Valider
+              {t('dashboard_validate', 'Validate')}
             </button>
           </form>
         ) : (
@@ -217,7 +217,7 @@ export default function FileUploader({ onUploadSuccess, currentUrl, label, accep
                     <p className="text-xs font-bold uppercase tracking-widest">
                       {fileName || t('dashboard_click_to_upload_file', { type: accept.replace('.', '').toUpperCase() })}
                     </p>
-                    <p className="text-[10px] text-gray-400">Glissez & déposez (Max 10Mo)</p>
+                    <p className="text-[10px] text-gray-400">{t('dashboard_drag_drop_max_10', 'Drag & drop (Max 10MB)')}</p>
                   </div>
                 </>
               )}

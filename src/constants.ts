@@ -382,7 +382,7 @@ export const MAGAZINES: Magazine[] = [
     issueDate: "Avril 2026",
     issueDate_en: "April 2026",
     coverImage: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
-    pdfUrl: "#",
+    pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
     description: "Édition Prestige : L'essence du leadership avec Lucie S. MATSOUAKA. Découvrez les portraits des femmes qui font bouger les lignes sur le continent.",
     description_en: "Prestige Edition: The essence of leadership with Lucie S. MATSOUAKA. Discover portraits of women moving the lines on the continent."
   }

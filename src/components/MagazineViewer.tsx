@@ -22,10 +22,9 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
   const navigate = useNavigate();
   const isPremium = profile?.subscriptionStatus === 'premium' || profile?.role === 'admin' || profile?.role === 'super-admin' || profile?.role === 'editor';
 
-  const isObsoletePdfUrl = pdfUrl.includes('cloudinary.com') && (pdfUrl.includes('/image/upload/') || pdfUrl.includes('/raw/upload/'));
   const [numPages, setNumPages] = useState<number>();
   const [pageNumber, setPageNumber] = useState<number>(1);
-  const [isPdfError, setIsPdfError] = useState(isObsoletePdfUrl);
+  const [isPdfError, setIsPdfError] = useState(false);
   const [isFallbackError, setIsFallbackError] = useState(false);
 
   function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
@@ -38,7 +37,7 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
     setIsPdfError(true);
   }
 
-  const safePdfUrl = pdfUrl;
+  const safePdfUrl = pdfUrl === '#' ? 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf' : pdfUrl;
   const googleDocsFallbackUrl = pdfUrl;
 
   const handleDownload = (e: React.MouseEvent) => {
@@ -65,6 +64,18 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
 
   const drivePreviewUrl = getGoogleDrivePreviewUrl(pdfUrl);
 
+  const isCloudinaryPdf = pdfUrl.includes('cloudinary.com') && pdfUrl.toLowerCase().endsWith('.pdf');
+  const [cloudPage, setCloudPage] = useState<number>(1);
+  const [maxCloudPage, setMaxCloudPage] = useState<number | null>(null);
+  const [cloudImgLoading, setCloudImgLoading] = useState(true);
+
+  const getCloudinaryPageUrl = (url: string, page: number) => {
+    const parts = url.split('/upload/');
+    if (parts.length !== 2) return url;
+    const suffix = parts[1].replace(/\.pdf$/i, '.jpg');
+    return `${parts[0]}/upload/pg_${page}/${suffix}`;
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -72,14 +83,14 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-md flex flex-col"
     >
-      {/* Header */}
+      {/*... header */}
       <div className="p-6 border-b border-white/10 flex justify-between items-center bg-black-rich">
         <div className="flex items-center gap-4">
           <FileText className="text-gold" />
           <h2 className="text-white font-serif text-xl">{title}</h2>
         </div>
         <div className="flex items-center gap-6">
-          {isPremium && (
+          {isPremium && !isCloudinaryPdf && (
             <button 
               onClick={handleDownload}
               className="flex items-center gap-2 text-gold text-xs uppercase tracking-widest font-bold hover:text-white transition-colors"
@@ -106,43 +117,72 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
               title={title}
               allow="autoplay"
             />
-          ) : isPdfError ? (
-            <div className="flex flex-col items-center justify-center h-full w-full">
-              {isObsoletePdfUrl ? (
-                 <div className="flex flex-col items-center justify-center p-8 text-center text-white max-w-lg">
-                   <AlertCircle size={64} className="text-gold mb-6" />
-                   <p className="text-gray-200 mb-4 text-xl font-serif">Hébergeur Obsolète (Cloudinary)</p>
-                   <p className="text-gray-400 mb-6 text-sm leading-relaxed">
-                     L'ancien serveur de documents bloque désormais la livraison des fichiers PDF pour des raisons de sécurité liées à leur politique gratuite.
-                   </p>
-                   <p className="text-gold mb-6 text-sm font-bold uppercase tracking-widest">
-                     Veuillez supprimer ce magazine et re-téléverser le fichier depuis le Dashboard. Le nouveau système est sécurisé et illimité.
-                   </p>
-                 </div>
-              ) : !isFallbackError ? (
-                 <iframe 
-                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(googleDocsFallbackUrl)}&embedded=true`} 
-                    className="w-full h-full border-none bg-gray-900" 
-                    title={title}
-                    onError={() => setIsFallbackError(true)}
+          ) : isCloudinaryPdf ? (
+            <div className="h-full w-full flex flex-col overflow-hidden">
+               <div className="flex-grow overflow-y-auto w-full flex justify-center p-4 custom-scrollbar relative">
+                 {cloudImgLoading && (
+                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 text-gold z-10 bg-gray-900/50 backdrop-blur-sm">
+                     <Loader2 className="animate-spin" size={48} />
+                   </div>
+                 )}
+                 <img 
+                   src={getCloudinaryPageUrl(pdfUrl, cloudPage)} 
+                   className="shadow-2xl shadow-black max-w-full h-auto object-contain"
+                   style={{ width: Math.min(window.innerWidth * 0.9, 1000) }}
+                   onLoad={() => setCloudImgLoading(false)}
+                   onError={() => {
+                     setCloudImgLoading(false);
+                     if (cloudPage > 1) {
+                        setMaxCloudPage(cloudPage - 1);
+                        setCloudPage(cloudPage - 1);
+                     } else {
+                        // Error on page 1
+                        setIsPdfError(true);
+                     }
+                   }}
+                   alt={`Page ${cloudPage}`}
+                   referrerPolicy="no-referrer"
                  />
-              ) : (
-                <div className="flex flex-col items-center justify-center p-8 text-center text-white max-w-lg">
-                  <AlertCircle size={64} className="text-red-500 mb-6" />
-                  <p className="text-gray-400 mb-6 text-lg leading-relaxed">
-                    Le lecteur ne peut pas afficher directement certains liens externes pour des raisons de sécurité de votre navigateur ou de l'hébergeur.
-                  </p>
-                  <a 
-                    href={safePdfUrl} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="btn-gold flex items-center gap-2"
+               </div>
+               <div className="h-20 bg-black-rich border-t border-white/5 flex items-center justify-between px-8 w-full flex-shrink-0">
+                  <button 
+                    onClick={() => { setCloudImgLoading(true); setCloudPage(prev => Math.max(prev - 1, 1)); }}
+                    disabled={cloudPage <= 1}
+                    className="p-3 text-white disabled:text-gray-700 hover:text-gold transition-colors flex items-center gap-2"
                   >
-                    <ExternalLink size={20} />
-                    {t('dashboard_open_new_tab', 'Ouvrir le document dans un nouvel onglet')}
-                  </a>
+                    <ChevronLeft /> Précédent
+                  </button>
+                  
+                  <div className="text-gray-400 text-sm font-mono bg-black/50 px-6 py-2 rounded-full border border-white/10">
+                    <span className="text-white font-bold">{cloudPage}</span> {maxCloudPage ? ` / ${maxCloudPage}` : ''}
+                  </div>
+
+                  <button 
+                    onClick={() => { setCloudImgLoading(true); setCloudPage(prev => prev + 1); }}
+                    disabled={maxCloudPage !== null && cloudPage >= maxCloudPage}
+                    className="p-3 text-white disabled:text-gray-700 hover:text-gold transition-colors flex items-center gap-2"
+                  >
+                    Suivant <ChevronRight />
+                  </button>
                 </div>
-              )}
+            </div>
+          ) : isPdfError ? (
+            <div className="flex flex-col items-center justify-center h-full w-full p-8 text-center text-white max-w-lg">
+              <AlertCircle size={64} className="text-gold mb-6" />
+              <p className="text-gray-200 mb-4 text-xl font-serif">Aperçu indisponible</p>
+              <p className="text-gray-400 mb-6 text-sm leading-relaxed">
+                Le navigateur ne permet pas l'affichage direct de ce fichier (sécurité ou limites de l'hébergeur).
+                {pdfUrl.includes('cloudinary.com') && " L'hébergeur Cloudinary bloque notamment la lecture en ligne."}
+              </p>
+              <a 
+                href={safePdfUrl} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn-gold flex items-center gap-2"
+              >
+                <ExternalLink size={20} />
+                Ouvrir le magazine (Nouvel onglet)
+              </a>
             </div>
           ) : (
             <div className="h-full w-full flex flex-col overflow-hidden">

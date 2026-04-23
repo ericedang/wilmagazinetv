@@ -50,7 +50,13 @@ service cloud.firestore {
 
     function isAdmin() {
       return isAuthenticated() && 
-        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['admin', 'super-admin'] ||
+         (request.auth.token.email == "ericapple2021@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isEditorOrAdmin() {
+      return isAuthenticated() && 
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['editor', 'admin', 'super-admin'] ||
          (request.auth.token.email == "ericapple2021@gmail.com" && request.auth.token.email_verified == true));
     }
 
@@ -71,7 +77,7 @@ service cloud.firestore {
       function isValidUser(data) {
         return data.uid is string && 
                data.email is string && isValidEmail(data.email) &&
-               data.role in ['user', 'admin'] &&
+               data.role in ['user', 'editor', 'admin', 'super-admin'] &&
                data.subscriptionStatus in ['free', 'premium'];
       }
 
@@ -84,49 +90,49 @@ service cloud.firestore {
     // Articles Collection
     match /articles/{articleId} {
       allow read: if true; // Public can see list/previews
-      allow write: if isAdmin();
+      allow write: if isEditorOrAdmin();
     }
 
     // Videos Collection
     match /videos/{videoId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isEditorOrAdmin();
     }
 
     // Magazines Collection
     match /magazines/{magazineId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isEditorOrAdmin();
     }
 
     // Events Collection
     match /events/{eventId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isEditorOrAdmin();
     }
 
     // Custom Sections Collection
     match /custom_sections/{sectionId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isEditorOrAdmin();
     }
 
     // Comments Collection
     match /comments/{commentId} {
-      allow read: if resource.data.status == 'approved' || isAdmin();
+      allow read: if resource.data.status == 'approved' || isEditorOrAdmin();
       allow write: if isAuthenticated();
     }
 
     // Announcements Collection
     match /announcements/{announcementId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isEditorOrAdmin();
     }
 
     // Settings Collection
     match /settings/{settingId} {
       function isValidSetting(data) {
-        return (settingId == 'marquee' && data.speed is number && data.speed >= 5 && data.speed <= 200) ||
+        return (settingId == 'marquee' && data.speed is number && data.speed >= 5 && data.speed <= 500) ||
                (settingId != 'marquee'); // Allow other settings for now
       }
       allow read: if true;

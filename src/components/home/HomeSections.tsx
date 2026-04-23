@@ -177,7 +177,7 @@ export const ArticlesGrid = () => {
               <h3 className="text-3xl md:text-4xl font-serif mb-4 group-hover:text-burgundy transition-colors">{getLocalized(articles[0], 'title')}</h3>
               <p className="text-gray-600 mb-6 line-clamp-2">{getLocalized(articles[0], 'excerpt')}</p>
               <div className="flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-gray-400">
-                <span>{t('by')} {articles[0].author}</span>
+                <span>{t('dashboard_by', 'By')} {articles[0].author}</span>
                 <span className="w-1 h-1 bg-gold rounded-full" />
                 <span>{articles[0].date}</span>
               </div>
@@ -227,7 +227,7 @@ export const PortraitOfMonth = () => {
             {t('leadership_essence').split(' ')[0]} <span className="italic text-gold">{t('leadership_essence').split(' ').slice(1).join(' ')}</span>
           </h2>
           <p className="text-gray-300 text-lg mb-10 leading-relaxed italic">
-            "Le véritable leadership consiste à ouvrir des portes là où d'autres ne voient que des murs. C'est un horizon de justice."
+            "{t('dashboard_quote_test', 'True leadership is about opening doors where others only see walls. It is an horizon of justice.')}"
           </p>
           <Link to="/articles/1" className="btn-gold">{t('read_interview')}</Link>
         </div>

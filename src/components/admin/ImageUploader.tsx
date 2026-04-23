@@ -242,8 +242,8 @@ export default function ImageUploader({ onUploadSuccess, currentUrl, label }: Im
                       <Upload size={24} className="text-gold" />
                     </div>
                     <div className="text-center">
-                      <p className="text-xs font-bold uppercase tracking-widest mb-1">{t('dashboard_click_to_upload') || 'Cliquer pour uploader'}</p>
-                      <p className="text-[10px] text-gray-400">JPG, PNG, WebP (Max 10Mo)</p>
+                      <p className="text-xs font-bold uppercase tracking-widest mb-1">{t('dashboard_click_to_upload')}</p>
+                      <p className="text-[10px] text-gray-400">JPG, PNG, WebP (Max 10MB)</p>
                     </div>
                   </>
                 )}
@@ -269,25 +269,25 @@ export default function ImageUploader({ onUploadSuccess, currentUrl, label }: Im
                   setPreview(e.target.value);
                   onUploadSuccess(e.target.value);
                 }}
-                placeholder={t('dashboard_paste_image_url') || 'Coller l\'URL de l\'image'}
+                placeholder={t('dashboard_paste_image_url')}
                 className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-100 text-xs focus:outline-none focus:border-gold focus:bg-white transition-all rounded-md"
               />
             </div>
             <button
               onClick={(e) => { e.preventDefault(); handleOpenMediaLibrary(); }}
               className="p-3 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-md transition-all flex items-center gap-2"
-              title="Médiathèque"
+              title={t('dashboard_media_library')}
             >
               <Search size={14} />
               <span className="text-[10px] font-bold uppercase tracking-widest hidden md:block">
-                Médiathèque
+                {t('dashboard_media_library')}
               </span>
             </button>
             {preview && (
               <button 
                 onClick={(e) => { e.preventDefault(); copyToClipboard(); }}
                 className={`p-3 rounded-md transition-all flex items-center gap-2 ${copied ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-                title="Copier l'URL"
+                title={t('dashboard_copy_url')}
               >
                 {copied ? <Check size={14} /> : <Copy size={14} />}
               </button>
@@ -363,8 +363,8 @@ export default function ImageUploader({ onUploadSuccess, currentUrl, label }: Im
                   <div className="flex gap-2">
                     <button onClick={() => setAspect(16 / 9)} className={`px-3 py-1.5 text-xs font-bold rounded flex-1 whitespace-nowrap ${aspect === 16/9 ? 'bg-gold text-white' : 'bg-gray-100 text-gray-600'}`}>16:9</button>
                     <button onClick={() => setAspect(4 / 3)} className={`px-3 py-1.5 text-xs font-bold rounded flex-1 whitespace-nowrap ${aspect === 4/3 ? 'bg-gold text-white' : 'bg-gray-100 text-gray-600'}`}>4:3</button>
-                    <button onClick={() => setAspect(1)} className={`px-3 py-1.5 text-xs font-bold rounded flex-1 whitespace-nowrap ${aspect === 1 ? 'bg-gold text-white' : 'bg-gray-100 text-gray-600'}`}>Carré</button>
-                    <button onClick={() => setAspect(undefined)} className={`px-3 py-1.5 text-xs font-bold rounded flex-1 whitespace-nowrap ${!aspect ? 'bg-gold text-white' : 'bg-gray-100 text-gray-600'}`}>Libre</button>
+                    <button onClick={() => setAspect(1)} className={`px-3 py-1.5 text-xs font-bold rounded flex-1 whitespace-nowrap ${aspect === 1 ? 'bg-gold text-white' : 'bg-gray-100 text-gray-600'}`}>{t('dashboard_square', 'Square')}</button>
+                    <button onClick={() => setAspect(undefined)} className={`px-3 py-1.5 text-xs font-bold rounded flex-1 whitespace-nowrap ${!aspect ? 'bg-gold text-white' : 'bg-gray-100 text-gray-600'}`}>{t('dashboard_free', 'Free')}</button>
                   </div>
                 </div>
                 
@@ -377,21 +377,21 @@ export default function ImageUploader({ onUploadSuccess, currentUrl, label }: Im
                     }}
                     className="px-4 py-2 text-[10px] font-bold text-gray-400 hover:text-red-500 uppercase tracking-widest transition-colors mr-auto"
                   >
-                    Annuler
+                    {t('dashboard_cancel')}
                   </button>
                   <button 
                     onClick={handleUploadOriginal}
                     className="px-6 py-3 text-xs font-bold uppercase tracking-widest text-gold bg-gold/5 hover:bg-gold/15 rounded flex items-center gap-2 transition-colors"
                   >
                     <ImageIcon size={16} />
-                    Garder l'original
+                    {t('dashboard_keep_original', 'Keep original')}
                   </button>
                   <button 
                     onClick={handleCropAndUpload}
                     className="btn-gold px-6 py-3 text-xs flex items-center gap-2"
                   >
                     <CropIcon size={16} />
-                    Recadrer et uploader
+                    {t('dashboard_crop_and_upload', 'Crop and upload')}
                   </button>
                 </div>
               </div>
@@ -411,7 +411,7 @@ export default function ImageUploader({ onUploadSuccess, currentUrl, label }: Im
           >
             <div className="w-full max-w-5xl h-[80vh] bg-white rounded-xl shadow-2xl overflow-hidden flex flex-col">
               <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                <h3 className="text-lg font-serif">Médiathèque</h3>
+                <h3 className="text-lg font-serif">{t('dashboard_media_library')}</h3>
                 <button 
                   onClick={() => setShowMediaLibrary(false)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500"
@@ -445,7 +445,7 @@ export default function ImageUploader({ onUploadSuccess, currentUrl, label }: Im
                     ))}
                     {mediaItems.length === 0 && (
                       <div className="col-span-full py-12 text-center text-gray-400 italic">
-                        La médiathèque est vide ou ne contient aucune image.
+                        {t('dashboard_empty_library', 'Your library is empty.')}
                       </div>
                     )}
                   </div>
