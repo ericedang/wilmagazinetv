@@ -17,9 +17,9 @@ import { useScrollToHash } from './hooks/useScrollToHash';
 import { Toaster } from 'react-hot-toast';
 
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean, error: any }> {
+  state = { hasError: false, error: null as any };
   constructor(props: { children: ReactNode }) {
     super(props);
-    this.state = { hasError: false, error: null };
   }
   static getDerivedStateFromError(error: any) {
     return { hasError: true, error };
@@ -31,7 +31,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
     if (this.state.hasError) {
       return <div id="caught-error" style={{ padding: 20, color: 'red' }}><h1>Something went wrong.</h1><pre>{this.state.error?.toString()}</pre></div>;
     }
-    return this.props.children;
+    return (this as any).props.children;
   }
 }
 
