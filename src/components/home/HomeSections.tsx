@@ -12,7 +12,7 @@ import { useLocalizedField } from '../../lib/i18n-utils';
 export const Hero = () => {
   const { t } = useTranslation();
   return (
-    <section id="hero" className="relative h-screen w-full flex items-center justify-center overflow-hidden">
+    <section id="hero" className="relative h-[100dvh] w-full flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 bg-black/40 z-10" />
       <img 
         src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=2000" 
@@ -27,7 +27,7 @@ export const Hero = () => {
           transition={{ duration: 1, ease: "easeOut" }}
         >
           <span className="text-gold uppercase tracking-[0.5em] text-xs mb-6 block font-medium">{t('prestige_edition')}</span>
-          <h1 className="text-5xl md:text-8xl font-serif mb-8 leading-tight">
+          <h1 className="text-4xl md:text-6xl lg:text-8xl font-serif mb-8 leading-tight">
             {t('leadership_essence').split(' ')[0]} <br /> <span className="italic">{t('leadership_essence').split(' ').slice(1).join(' ')}</span>
           </h1>
           <p className="text-lg md:text-xl mb-10 max-w-2xl mx-auto text-gray-200 font-light tracking-wide">
@@ -223,7 +223,7 @@ export const PortraitOfMonth = () => {
       <div className="container-custom relative z-10">
         <div className="max-w-2xl">
           <span className="text-gold uppercase tracking-[0.4em] text-xs mb-6 block">{t('portrait_month')}</span>
-          <h2 className="text-5xl md:text-7xl font-serif text-white mb-8 leading-tight">
+          <h2 className="text-4xl md:text-5xl lg:text-7xl font-serif text-white mb-8 leading-tight">
             {t('leadership_essence').split(' ')[0]} <span className="italic text-gold">{t('leadership_essence').split(' ').slice(1).join(' ')}</span>
           </h2>
           <p className="text-gray-300 text-lg mb-10 leading-relaxed italic">

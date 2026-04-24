@@ -20,7 +20,7 @@
 
 @layer base {
   body {
-    @apply bg-white text-black-rich font-sans antialiased;
+    @apply bg-white text-black-rich font-sans antialiased overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {

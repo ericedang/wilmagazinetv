@@ -144,7 +144,7 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
                    referrerPolicy="no-referrer"
                  />
                </div>
-               <div className="h-20 bg-black-rich border-t border-white/5 flex items-center justify-between px-8 w-full flex-shrink-0">
+               <div className="h-20 bg-black-rich border-t border-white/5 flex items-center justify-between px-4 md:px-8 w-full flex-shrink-0">
                   <button 
                     onClick={() => { setCloudImgLoading(true); setCloudPage(prev => Math.max(prev - 1, 1)); }}
                     disabled={cloudPage <= 1}
@@ -210,7 +210,7 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
               </div>
 
               {numPages && (
-                <div className="h-20 bg-black-rich border-t border-white/5 flex items-center justify-between px-8 w-full flex-shrink-0">
+                <div className="h-20 bg-black-rich border-t border-white/5 flex items-center justify-between px-4 md:px-8 w-full flex-shrink-0">
                   <button 
                     onClick={() => setPageNumber(prev => Math.max(prev - 1, 1))}
                     disabled={pageNumber <= 1}

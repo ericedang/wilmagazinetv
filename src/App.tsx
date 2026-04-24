@@ -41,7 +41,7 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-[100dvh]">
           <Navbar />
           <main className="flex-grow">
             <Routes>

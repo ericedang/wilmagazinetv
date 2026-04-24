@@ -195,7 +195,7 @@ export default function Subscribe() {
   ];
 
   return (
-    <div className="pt-32 pb-20 container-custom min-h-screen">
+    <div className="pt-32 pb-20 container-custom min-h-[100dvh]">
       <div className="text-center max-w-2xl mx-auto mb-12">
         <BackButton className="mx-auto mb-8" />
         <h1 className="text-5xl font-serif mb-6">{t('join_community') || t('common.join_community')}</h1>

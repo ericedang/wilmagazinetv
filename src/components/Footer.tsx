@@ -68,7 +68,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-10 border-t border-white/10 flex flex-col md:row justify-between items-center text-[10px] uppercase tracking-widest text-gray-500 space-y-4 md:space-y-0">
+        <div className="pt-10 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-[10px] uppercase tracking-widest text-gray-500 space-y-4 md:space-y-0">
           <p>{t('footer_text')}</p>
           <div className="flex space-x-8">
             <a href="#" className="hover:text-white transition-colors">{t('legal_notice')}</a>

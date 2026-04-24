@@ -24,14 +24,14 @@ export default function Events() {
 
   if (loading) {
     return (
-      <div className="pt-32 min-h-screen flex items-center justify-center">
+      <div className="pt-32 min-h-[100dvh] flex items-center justify-center">
         <Loader2 className="animate-spin text-gold" size={48} />
       </div>
     );
   }
 
   return (
-    <div className="pt-32 pb-20 container-custom min-h-screen">
+    <div className="pt-32 pb-20 container-custom min-h-[100dvh]">
       <BackButton className="mb-8" />
       <div className="text-center max-w-3xl mx-auto mb-24">
         <h1 className="text-5xl md:text-7xl font-serif mb-8">{t('events')}</h1>

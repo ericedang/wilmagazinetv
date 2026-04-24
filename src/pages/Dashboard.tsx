@@ -1429,7 +1429,7 @@ export default function Dashboard() {
 
   if (!user) {
     return (
-      <div className="pt-32 pb-20 container-custom min-h-screen flex flex-col items-center justify-center text-center">
+      <div className="pt-32 pb-20 container-custom min-h-[100dvh] flex flex-col items-center justify-center text-center">
         <div className="max-w-md w-full bg-gray-50 p-12 border border-gray-100 shadow-sm relative">
           <h1 className="text-4xl font-serif mb-6">{t('dashboard_my_space')}</h1>
           <p className="text-gray-600 mb-10 text-sm leading-relaxed">{t('dashboard_login_desc')}</p>
@@ -1551,7 +1551,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="pt-32 pb-20 container-custom min-h-screen">
+    <div className="pt-32 pb-20 container-custom min-h-[100dvh]">
       <div className="editorial-grid">
         {/* Sidebar */}
         <div className="md:col-span-3">

@@ -129,7 +129,7 @@ export default function Magazine() {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-[100dvh]">
       <PageBuilder pageSlug="magazine" nativeSections={nativeSections} />
       
       <AnimatePresence>

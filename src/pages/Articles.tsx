@@ -29,14 +29,14 @@ export default function Articles() {
 
   if (loading) {
     return (
-      <div className="pt-32 min-h-screen flex items-center justify-center">
+      <div className="pt-32 min-h-[100dvh] flex items-center justify-center">
         <Loader2 className="animate-spin text-gold" size={48} />
       </div>
     );
   }
 
   return (
-    <div className="pt-32 pb-20 container-custom min-h-screen">
+    <div className="pt-32 pb-20 container-custom min-h-[100dvh]">
       <BackButton className="mb-8" />
       <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
         <div>

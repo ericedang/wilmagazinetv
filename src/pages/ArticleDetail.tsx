@@ -90,7 +90,7 @@ export default function ArticleDetail() {
 
   if (loading) {
     return (
-      <div className="pt-32 min-h-screen flex items-center justify-center">
+      <div className="pt-32 min-h-[100dvh] flex items-center justify-center">
         <Loader2 className="animate-spin text-gold" size={48} />
       </div>
     );
@@ -98,7 +98,7 @@ export default function ArticleDetail() {
 
   if (!article) {
     return (
-      <div className="pt-32 min-h-screen container-custom text-center">
+      <div className="pt-32 min-h-[100dvh] container-custom text-center">
         <BackButton className="mx-auto mb-8" />
         <h1 className="text-4xl font-serif mb-8">{t('article_not_found')}</h1>
         <Link to="/articles" className="btn-gold">{t('back_to_articles')}</Link>
@@ -117,7 +117,7 @@ export default function ArticleDetail() {
   };
 
   return (
-    <div className="pt-32 pb-20 min-h-screen bg-white">
+    <div className="pt-32 pb-20 min-h-[100dvh] bg-white">
       <article className="container-custom max-w-4xl">
         <BackButton className="mb-12" />
 
@@ -127,7 +127,7 @@ export default function ArticleDetail() {
             <span className="w-1 h-1 bg-gray-300 rounded-full" />
             <span className="text-gray-400">{t('reading')} {getLocalized(article, 'date')}</span>
           </div>
-          <h1 className="text-5xl md:text-7xl font-serif mb-12 leading-tight">
+          <h1 className="text-3xl md:text-5xl lg:text-7xl font-serif mb-12 leading-tight">
             {getLocalized(article, 'title')}
           </h1>
           <div className="flex flex-wrap items-center justify-between gap-8 py-8 border-y border-gray-100">

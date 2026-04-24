@@ -378,7 +378,7 @@ export default function TV() {
   ];
 
   return (
-    <div className="min-h-screen bg-black pb-12">
+    <div className="min-h-[100dvh] bg-black pb-12">
       <PageBuilder pageSlug="tv" nativeSections={nativeSections} />
 
       {/* Scrolling Ticker */}
