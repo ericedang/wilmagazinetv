@@ -83,7 +83,7 @@ export default function ReservationModal({ isOpen, onClose, events, selectedEven
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="bg-white w-full max-w-2xl overflow-hidden shadow-2xl relative"
+          className="bg-white w-full max-w-2xl overflow-y-auto max-h-[90vh] shadow-2xl relative"
         >
           <button 
             onClick={onClose}

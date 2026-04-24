@@ -2018,7 +2018,7 @@ export default function Dashboard() {
                   </button>
                 </div>
               </div>
-              <div className="bg-white border border-gray-100 shadow-sm overflow-hidden">
+              <div className="bg-white border border-gray-100 shadow-sm overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-gray-50 border-b border-gray-100 uppercase tracking-widest font-bold text-gray-400">
                     <tr>
@@ -2353,7 +2353,7 @@ export default function Dashboard() {
           ) : activeTab === 'contacts-mgmt' ? (
             <div className="space-y-8">
               <h2 className="text-3xl font-serif">{t('dashboard_contacts_directory')}</h2>
-              <div className="bg-white border border-gray-100 shadow-sm overflow-hidden">
+              <div className="bg-white border border-gray-100 shadow-sm overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-gray-50 border-b border-gray-100 uppercase tracking-widest font-bold text-gray-400">
                     <tr>
@@ -2415,7 +2415,7 @@ export default function Dashboard() {
           ) : activeTab === 'users-mgmt' ? (
             <div className="space-y-8">
               <h2 className="text-3xl font-serif">{t('dashboard_users_mgmt')}</h2>
-              <div className="bg-white border border-gray-100 shadow-sm overflow-hidden">
+              <div className="bg-white border border-gray-100 shadow-sm overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-gray-50 border-b border-gray-100 uppercase tracking-widest font-bold text-gray-400">
                     <tr>
@@ -2616,7 +2616,7 @@ export default function Dashboard() {
                 </motion.div>
               )}
               
-              <div className="bg-white border border-gray-100 shadow-sm overflow-hidden">
+              <div className="bg-white border border-gray-100 shadow-sm overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-gray-50 border-b border-gray-100 uppercase tracking-widest font-bold text-gray-400">
                     <tr>
@@ -2926,7 +2926,7 @@ export default function Dashboard() {
               className="space-y-8"
             >
               <h2 className="text-4xl font-serif mb-12">{t('dashboard_reservations_mgmt')}</h2>
-              <div className="bg-white border border-gray-100 shadow-sm overflow-hidden">
+              <div className="bg-white border border-gray-100 shadow-sm overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-gray-50 border-b border-gray-100 uppercase tracking-widest font-bold text-gray-400">
                     <tr>
@@ -3270,7 +3270,7 @@ export default function Dashboard() {
                       layout
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="group bg-white border border-gray-100 shadow-sm overflow-hidden relative"
+                      className="group bg-white border border-gray-100 shadow-sm overflow-x-auto relative"
                     >
                       <div className="aspect-square bg-gray-50 relative overflow-hidden">
                         {item.type?.startsWith('image/') ? (

@@ -43,7 +43,7 @@ const ContactFloating = () => {
   ];
 
   return (
-    <div className="fixed bottom-20 right-8 z-50">
+    <div className="fixed bottom-20 right-4 md:right-8 z-50">
       <AnimatePresence>
         {open && (
           <motion.div
