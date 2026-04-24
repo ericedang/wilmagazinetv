@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocalizedField } from '../lib/i18n-utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Loader2, CheckCircle2, Calendar, MapPin, User, Mail, Phone, Ticket, ChevronDown } from 'lucide-react';
 import { Event, Reservation } from '../types';
@@ -14,6 +15,7 @@ interface ReservationModalProps {
 
 export default function ReservationModal({ isOpen, onClose, events, selectedEventId }: ReservationModalProps) {
   const { t } = useTranslation();
+  const getLocalized = useLocalizedField();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -150,7 +152,7 @@ export default function ReservationModal({ isOpen, onClose, events, selectedEven
                       >
                         <option value="" disabled>{t('select_event')}</option>
                         {events.map(event => (
-                          <option key={event.id} value={event.id}>{event.title}</option>
+                          <option key={event.id} value={event.id}>{getLocalized(event, 'title')}</option>
                         ))}
                       </select>
                       <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />

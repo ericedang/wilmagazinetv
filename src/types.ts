@@ -2,14 +2,18 @@ export interface Article {
   id: string;
   title: string;
   title_en?: string;
+  title_es?: string;
   excerpt: string;
   excerpt_en?: string;
+  excerpt_es?: string;
   content: string;
   content_en?: string;
+  content_es?: string;
   author: string;
   date: string;
   category: string;
   category_en?: string;
+  category_es?: string;
   image: string;
   isPremium: boolean;
 }
@@ -18,43 +22,54 @@ export interface Video {
   id: string;
   title: string;
   title_en?: string;
+  title_es?: string;
   thumbnail: string;
   videoUrl: string;
   duration: string;
   category: string;
   category_en?: string;
+  category_es?: string;
   description: string;
   description_en?: string;
+  description_es?: string;
 }
 
 export interface Magazine {
   id: string;
   title: string;
   title_en?: string;
+  title_es?: string;
   issueDate: string;
   issueDate_en?: string;
+  issueDate_es?: string;
   coverImage: string;
   pdfUrl: string;
   description: string;
   description_en?: string;
+  description_es?: string;
 }
 
 export interface Event {
   id: string;
   title: string;
   title_en?: string;
+  title_es?: string;
   date: string;
   date_en?: string;
+  date_es?: string;
   location: string;
   location_en?: string;
+  location_es?: string;
   description: string;
   description_en?: string;
+  description_es?: string;
   image: string;
   price: string;
   attendees: string;
   ticketTypes?: {
     name: string;
     name_en?: string;
+    name_es?: string;
     price: string;
   }[];
 }

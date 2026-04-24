@@ -125,7 +125,7 @@ export default function ArticleDetail() {
           <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-gold mb-6 font-bold">
             <span>{getLocalized(article, 'category')}</span>
             <span className="w-1 h-1 bg-gray-300 rounded-full" />
-            <span className="text-gray-400">{t('reading')} {article.date}</span>
+            <span className="text-gray-400">{t('reading')} {getLocalized(article, 'date')}</span>
           </div>
           <h1 className="text-5xl md:text-7xl font-serif mb-12 leading-tight">
             {getLocalized(article, 'title')}
@@ -184,11 +184,11 @@ export default function ArticleDetail() {
         {isPremiumRestriction ? (
           <div className="max-w-3xl mx-auto bg-black-rich p-12 text-white shadow-2xl text-center mb-16 relative z-10 border border-gold/20">
             <Crown size={48} className="mx-auto mb-6 text-gold" />
-            <h2 className="text-3xl font-serif mb-4">Lisez la suite de cet article</h2>
+            <h2 className="text-3xl font-serif mb-4">{t('read_rest_article_title')}</h2>
             <p className="text-gray-400 mb-8 max-w-xl mx-auto">
-              Le Women In Leadership Magazine vous offre du contenu exclusif de haute qualité. Abonnez-vous pour lire l'intégralité de cet article et soutenir le mouvement.
+              {t('read_rest_article_description')}
             </p>
-            <Link to="/subscription" className="btn-gold inline-block px-12 py-4 shadow-xl shadow-gold/20">S'abonner pour continuer</Link>
+            <Link to="/subscription" className="btn-gold inline-block px-12 py-4 shadow-xl shadow-gold/20">{t('subscribe_to_continue')}</Link>
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-12 border-t border-gray-100 mb-12">

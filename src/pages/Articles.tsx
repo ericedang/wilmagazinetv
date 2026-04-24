@@ -108,7 +108,7 @@ export default function Articles() {
 
             <div className="flex items-center justify-between pt-6 border-t border-gray-100">
               <div className="text-[9px] uppercase tracking-widest text-gray-400 font-medium">
-                {article.date}
+                {getLocalized(article, 'date')}
               </div>
               <Link 
                 to={article.isPremium && !isPremium ? "/subscribe" : `/articles/${article.id}`}

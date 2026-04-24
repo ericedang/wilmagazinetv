@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { signInWithPopup, googleProvider, auth, signOut, db, doc, setDoc, updateDoc, deleteDoc, collection, addDoc, getDocs, query, limit, serverTimestamp, onSnapshot, where, orderBy, OperationType, handleFirestoreError, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from '../firebase';
 import { ARTICLES, VIDEOS, MAGAZINES, EVENTS } from '../constants';
 import { Database, Loader2, Sparkles, FileText, Send, CheckCircle2, AlertCircle, Layout, Settings, Play, Image, Copy, Ticket, XCircle, Download, MessageSquare, Mail, Upload, X, Trash2, Calendar } from 'lucide-react';
+import { useLocalizedField } from '../lib/i18n-utils';
 import { ArrowRight, LogOut, User, CreditCard, Bookmark, History, ShieldCheck, ArrowLeft, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
@@ -25,6 +26,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 export default function Dashboard() {
   const { user, profile, loading } = useAuth();
   const { t } = useTranslation();
+  const getLocalized = useLocalizedField();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [error, setError] = React.useState<string | null>(null);

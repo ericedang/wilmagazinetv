@@ -117,7 +117,7 @@ export default function Magazine() {
                   </div>
                   <div className="text-center">
                     <h3 className="font-serif text-2xl mb-2 group-hover:text-gold transition-colors">{getLocalized(issue, 'title')}</h3>
-                    <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold">{issue.issueDate}</p>
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold">{getLocalized(issue, 'issueDate')}</p>
                   </div>
                 </motion.div>
               ))}

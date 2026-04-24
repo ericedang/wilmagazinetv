@@ -202,7 +202,7 @@ export const ArticlesGrid = () => {
                 <div className="flex items-center gap-3 text-[9px] uppercase tracking-widest text-gray-400">
                   <span>{getLocalized(article, 'category')}</span>
                   <span className="w-1 h-1 bg-gold rounded-full" />
-                  <span>{article.date}</span>
+                  <span>{getLocalized(article, 'date')}</span>
                 </div>
               </Link>
             ))}

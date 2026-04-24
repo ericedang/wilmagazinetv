@@ -2,433 +2,428 @@ import { Article, Video, Magazine, Event } from './types';
 
 export const ARTICLES: Article[] = [
   {
-    id: '1',
-    title: "Lucie S. MATSOUAKA : L'essence du leadership",
-    title_en: "Lucie S. MATSOUAKA: The Essence of Leadership",
-    excerpt: "Née au Cameroun, Lucie S. Matsouaka est une coach professionnelle certifiée, auteure et conférencière internationale passionnée par le leadership jeunesse.",
-    excerpt_en: "Born in Cameroon, Lucie S. Matsouaka is a certified professional coach, author, and international speaker passionate about youth leadership.",
-    content: `Lucie S. Matsouaka incarne une vision du leadership basée sur l'intégrité et la résilience. Dans cet entretien exclusif, elle partage ses leçons de vie et sa foi inébranlable. 
-
-'Le véritable leadership consiste à ouvrir des portes là où d'autres ne voient que des murs. C'est un horizon de justice.' Elle discute également de l'importance de la mentalité d'abondance face aux défis du continent.
-
-### Un parcours d'excellence
-Originaire du Cameroun, Lucie a bâti sa carrière sur la conviction que chaque individu possède un potentiel illimité. Son approche du coaching ne se limite pas à la performance professionnelle, mais englobe une transformation holistique de l'être.
-
-### La Vision Women Impact
-Pour Lucie, l'impact des femmes dans la société africaine est le levier principal du développement. Elle encourage les jeunes femmes à prendre leur place dans les instances de décision, non par quota, mais par compétence et vision.`,
-    content_en: `Lucie S. Matsouaka embodies a vision of leadership based on integrity and resilience. In this exclusive interview, she shares her life lessons and unwavering faith.
-
-'True leadership consists of opening doors where others only see walls. It is a horizon of justice.' She also discusses the importance of an abundance mindset in the face of the continent's challenges.
-
-### A Path of Excellence
-Originally from Cameroon, Lucie built her career on the conviction that every individual possesses unlimited potential. Her coaching approach is not limited to professional performance but encompasses a holistic transformation of the being.
-
-### The Women Impact Vision
-For Lucie, the impact of women in African society is the main lever for development. She encourages young women to take their place in decision-making bodies, not by quota, but by competence and vision.`,
-    author: "Frank Olivier Kamto Fopossi",
-    date: "Avril 2026",
-    category: "Leadership",
-    category_en: "Leadership",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1200",
-    isPremium: true
+    "id": "1",
+    "title": "Lucie S. MATSOUAKA : L'essence du leadership",
+    "title_en": "Lucie S. MATSOUAKA: The Essence of Leadership",
+    "excerpt": "Née au Cameroun, Lucie S. Matsouaka est une coach professionnelle certifiée, auteure et conférencière internationale passionnée par le leadership jeunesse.",
+    "excerpt_en": "Born in Cameroon, Lucie S. Matsouaka is a certified professional coach, author, and international speaker passionate about youth leadership.",
+    "content": "Lucie S. Matsouaka incarne une vision du leadership basée sur l'intégrité et la résilience. Dans cet entretien exclusif, elle partage ses leçons de vie et sa foi inébranlable. \n\n'Le véritable leadership consiste à ouvrir des portes là où d'autres ne voient que des murs. C'est un horizon de justice.' Elle discute également de l'importance de la mentalité d'abondance face aux défis du continent.\n\n### Un parcours d'excellence\nOriginaire du Cameroun, Lucie a bâti sa carrière sur la conviction que chaque individu possède un potentiel illimité. Son approche du coaching ne se limite pas à la performance professionnelle, mais englobe une transformation holistique de l'être.\n\n### La Vision Women Impact\nPour Lucie, l'impact des femmes dans la société africaine est le levier principal du développement. Elle encourage les jeunes femmes à prendre leur place dans les instances de décision, non par quota, mais par compétence et vision.",
+    "content_en": "Lucie S. Matsouaka embodies a vision of leadership based on integrity and resilience. In this exclusive interview, she shares her life lessons and unwavering faith.\n\n'True leadership consists of opening doors where others only see walls. It is a horizon of justice.' She also discusses the importance of an abundance mindset in the face of the continent's challenges.\n\n### A Path of Excellence\nOriginally from Cameroon, Lucie built her career on the conviction that every individual possesses unlimited potential. Her coaching approach is not limited to professional performance but encompasses a holistic transformation of the being.\n\n### The Women Impact Vision\nFor Lucie, the impact of women in African society is the main lever for development. She encourages young women to take their place in decision-making bodies, not by quota, but by competence and vision.",
+    "author": "Frank Olivier Kamto Fopossi",
+    "date": "Avril 2026",
+    "category": "Leadership",
+    "category_en": "Leadership",
+    "image": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": true,
+    "title_es": "Lucie S. MATSOUAKA: La esencia del liderazgo",
+    "excerpt_es": "Nacida en Camerún, Lucie S. Matsouaka es una entrenadora profesional certificada, autora y oradora internacional apasionada por el liderazgo juvenil.",
+    "content_es": "Lucie S. Matsouaka encarna una visión de liderazgo basada en la integridad y la resiliencia. En esta entrevista exclusiva, comparte sus lecciones de vida y su fe inquebrantable. \n\n'El verdadero liderazgo consiste en abrir puertas donde otros sólo ven paredes. Es un horizonte de justicia”. También analiza la importancia de la mentalidad de abundancia frente a los desafíos del continente.\n\n### Un viaje de excelencia\nOriginaria de Camerún, Lucie ha construido su carrera basándose en la creencia de que cada individuo tiene un potencial ilimitado. Su enfoque del coaching no se limita al desempeño profesional, sino que abarca una transformación holística del ser.\n\n### La visión del impacto de las mujeres\nPara Lucie, el impacto de las mujeres en la sociedad africana es la principal palanca para el desarrollo. Alienta a las mujeres jóvenes a ocupar su lugar en los órganos de toma de decisiones, no por cuotas, sino por habilidades y visión.",
+    "category_es": "Liderazgo"
   },
   {
-    id: '2',
-    title: "Rose Leke : La voix de la science africaine",
-    title_en: "Rose Leke: The Voice of African Science",
-    excerpt: "Figure mondiale de l'immunologie et de la lutte contre le paludisme, Rose Gana Fomban Leke incarne depuis plusieurs décennies l'excellence scientifique africaine.",
-    excerpt_en: "A global figure in immunology and the fight against malaria, Rose Gana Fomban Leke has embodied African scientific excellence for several decades.",
-    content: `Figure mondiale de l'immunologie et de la lutte contre le paludisme, Rose Gana Fomban Leke incarne depuis plusieurs décennies l'excellence scientifique africaine. La chercheuse camerounaise, distinguée en 2024 par le Prix L'Oréal-UNESCO pour les Femmes et la Science, s'est imposée comme l'une des voix majeures de la recherche sur les maladies infectieuses en Afrique.
-
-### Un combat pour la santé publique
-Depuis son laboratoire à Yaoundé, elle a formé des générations de chercheurs. Son travail sur le paludisme gestationnel a sauvé des milliers de vies. 'La science n'a pas de genre, mais elle a besoin de la perspective féminine pour résoudre les problèmes complexes de santé en Afrique', affirme-t-elle.
-
-### L'héritage scientifique
-Rose Leke ne se contente pas de publier des articles de haut niveau ; elle milite pour que les infrastructures de recherche sur le continent soient à la hauteur des enjeux mondiaux.`,
-    content_en: `A global figure in immunology and the fight against malaria, Rose Gana Fomban Leke has embodied African scientific excellence for several decades. The Cameroonian researcher, honored in 2024 with the L'Oréal-UNESCO For Women in Science Award, has established herself as one of the major voices in infectious disease research in Africa.
-
-### A Fight for Public Health
-From her laboratory in Yaoundé, she has trained generations of researchers. Her work on gestational malaria has saved thousands of lives. 'Science has no gender, but it needs the female perspective to solve complex health problems in Africa,' she asserts.
-
-### Scientific Legacy
-Rose Leke is not content with publishing high-level articles; she campaigns for research infrastructure on the continent to match global stakes.`,
-    author: "Frank Olivier Kamto Fopossi",
-    date: "Avril 2026",
-    category: "Science",
-    category_en: "Science",
-    image: "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=1200",
-    isPremium: false
+    "id": "2",
+    "title": "Rose Leke : La voix de la science africaine",
+    "title_en": "Rose Leke: The Voice of African Science",
+    "excerpt": "Figure mondiale de l'immunologie et de la lutte contre le paludisme, Rose Gana Fomban Leke incarne depuis plusieurs décennies l'excellence scientifique africaine.",
+    "excerpt_en": "A global figure in immunology and the fight against malaria, Rose Gana Fomban Leke has embodied African scientific excellence for several decades.",
+    "content": "Figure mondiale de l'immunologie et de la lutte contre le paludisme, Rose Gana Fomban Leke incarne depuis plusieurs décennies l'excellence scientifique africaine. La chercheuse camerounaise, distinguée en 2024 par le Prix L'Oréal-UNESCO pour les Femmes et la Science, s'est imposée comme l'une des voix majeures de la recherche sur les maladies infectieuses en Afrique.\n\n### Un combat pour la santé publique\nDepuis son laboratoire à Yaoundé, elle a formé des générations de chercheurs. Son travail sur le paludisme gestationnel a sauvé des milliers de vies. 'La science n'a pas de genre, mais elle a besoin de la perspective féminine pour résoudre les problèmes complexes de santé en Afrique', affirme-t-elle.\n\n### L'héritage scientifique\nRose Leke ne se contente pas de publier des articles de haut niveau ; elle milite pour que les infrastructures de recherche sur le continent soient à la hauteur des enjeux mondiaux.",
+    "content_en": "A global figure in immunology and the fight against malaria, Rose Gana Fomban Leke has embodied African scientific excellence for several decades. The Cameroonian researcher, honored in 2024 with the L'Oréal-UNESCO For Women in Science Award, has established herself as one of the major voices in infectious disease research in Africa.\n\n### A Fight for Public Health\nFrom her laboratory in Yaoundé, she has trained generations of researchers. Her work on gestational malaria has saved thousands of lives. 'Science has no gender, but it needs the female perspective to solve complex health problems in Africa,' she asserts.\n\n### Scientific Legacy\nRose Leke is not content with publishing high-level articles; she campaigns for research infrastructure on the continent to match global stakes.",
+    "author": "Frank Olivier Kamto Fopossi",
+    "date": "Avril 2026",
+    "category": "Science",
+    "category_en": "Science",
+    "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": false,
+    "title_es": "Rose Leke: la voz de la ciencia africana",
+    "excerpt_es": "Rose Gana Fomban Leke, figura mundial de la inmunología y la lucha contra la malaria, encarna la excelencia científica africana desde hace varias décadas.",
+    "content_es": "Rose Gana Fomban Leke, figura mundial de la inmunología y la lucha contra la malaria, encarna la excelencia científica africana desde hace varias décadas. La investigadora camerunesa, distinguida en 2024 con el Premio L'Oréal-UNESCO a la Mujer en la Ciencia, se ha consolidado como una de las principales voces de la investigación sobre las enfermedades infecciosas en África.\n\n### Una lucha por la salud pública\nDesde su laboratorio de Yaundé, ha formado a generaciones de investigadores. Su trabajo sobre la malaria gestacional salvó miles de vidas. \"La ciencia no tiene género, pero necesita una perspectiva femenina para resolver los complejos problemas de salud de África\", afirma.\n\n### Patrimonio científico\nRose Leke no sólo publica artículos de alto perfil; Ella hace campaña a favor de infraestructuras de investigación en el continente para enfrentar los desafíos globales.",
+    "category_es": "Ciencia"
   },
   {
-    id: '3',
-    title: "Mentalité d'Abondance vs Pénurie",
-    title_en: "Abundance vs. Scarcity Mindset",
-    excerpt: "Comment reprogrammer votre esprit pour le succès et la prospérité en Afrique.",
-    excerpt_en: "How to reprogram your mind for success and prosperity in Africa.",
-    content: `La psychologie du succès commence par la perception que nous avons des ressources. Passer d'une mentalité de pénurie à une mentalité d'abondance transforme non seulement votre carrière mais aussi votre vie personnelle. 
-
-### Les piliers de l'abondance
-1. **La Gratitude** : Reconnaître ce que l'on a déjà pour attirer plus.
-2. **La Collaboration** : Voir les autres comme des partenaires potentiels plutôt que des concurrents.
-3. **La Vision** : Se projeter dans le succès futur malgré les obstacles présents.
-
-Apprenez les techniques de visualisation et d'affirmation utilisées par les plus grands leaders mondiaux pour surmonter les obstacles structurels.`,
-    content_en: `The psychology of success begins with our perception of resources. Moving from a scarcity mindset to an abundance mindset transforms not only your career but also your personal life.
-
-### The Pillars of Abundance
-1. **Gratitude**: Acknowledging what you already have to attract more.
-2. **Collaboration**: Seeing others as potential partners rather than competitors.
-3. **Vision**: Projecting yourself into future success despite present obstacles.
-
-Learn the visualization and affirmation techniques used by the world's greatest leaders to overcome structural obstacles.`,
-    author: "Dr. Jean-Paul B.",
-    date: "Avril 2026",
-    category: "Mindset & Succès",
-    category_en: "Mindset & Success",
-    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1200",
-    isPremium: true
+    "id": "3",
+    "title": "Mentalité d'Abondance vs Pénurie",
+    "title_en": "Abundance vs. Scarcity Mindset",
+    "excerpt": "Comment reprogrammer votre esprit pour le succès et la prospérité en Afrique.",
+    "excerpt_en": "How to reprogram your mind for success and prosperity in Africa.",
+    "content": "La psychologie du succès commence par la perception que nous avons des ressources. Passer d'une mentalité de pénurie à une mentalité d'abondance transforme non seulement votre carrière mais aussi votre vie personnelle. \n\n### Les piliers de l'abondance\n1. **La Gratitude** : Reconnaître ce que l'on a déjà pour attirer plus.\n2. **La Collaboration** : Voir les autres comme des partenaires potentiels plutôt que des concurrents.\n3. **La Vision** : Se projeter dans le succès futur malgré les obstacles présents.\n\nApprenez les techniques de visualisation et d'affirmation utilisées par les plus grands leaders mondiaux pour surmonter les obstacles structurels.",
+    "content_en": "The psychology of success begins with our perception of resources. Moving from a scarcity mindset to an abundance mindset transforms not only your career but also your personal life.\n\n### The Pillars of Abundance\n1. **Gratitude**: Acknowledging what you already have to attract more.\n2. **Collaboration**: Seeing others as potential partners rather than competitors.\n3. **Vision**: Projecting yourself into future success despite present obstacles.\n\nLearn the visualization and affirmation techniques used by the world's greatest leaders to overcome structural obstacles.",
+    "author": "Dr. Jean-Paul B.",
+    "date": "Avril 2026",
+    "category": "Mindset & Succès",
+    "category_en": "Mindset & Success",
+    "image": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": true,
+    "title_es": "Mentalidad de abundancia versus escasez",
+    "excerpt_es": "Cómo reprogramar tu mente para el éxito y la prosperidad en África.",
+    "content_es": "La psicología del éxito comienza con nuestra percepción de los recursos. Pasar de una mentalidad de escasez a una mentalidad de abundancia transforma no sólo tu carrera sino también tu vida personal. \n\n### Los pilares de la abundancia\n1. **Gratitud**: Reconoce lo que ya tienes para atraer más.\n2. **Colaboración**: vea a los demás como socios potenciales en lugar de competidores.\n3. **La Visión**: Proyectarse hacia el éxito futuro a pesar de los obstáculos presentes.\n\nAprenda las técnicas de visualización y afirmación utilizadas por los líderes más importantes del mundo para superar obstáculos estructurales.",
+    "category_es": "Mentalidad y éxito"
   },
   {
-    id: '4',
-    title: "Foi & Leadership : Diriger avec des Valeurs",
-    title_en: "Faith & Leadership: Leading with Values",
-    excerpt: "L'impact de la spiritualité dans la prise de décision stratégique pour les leaders africains.",
-    excerpt_en: "The impact of spirituality on strategic decision-making for African leaders.",
-    content: `De nombreux leaders de haut niveau puisent leur force dans leur foi. 'Confie-toi à Dieu, pas aux hommes...' n'est pas seulement une citation, c'est un principe de gestion du stress et de vision à long terme. 
-
-Nous explorons comment intégrer ses valeurs profondes dans un environnement corporate compétitif tout en restant authentique. Le leadership spirituel ne consiste pas à imposer ses croyances, mais à agir avec une éthique irréprochable et un sens du service.`,
-    content_en: `Many high-level leaders draw their strength from their faith. 'Trust in God, not in men...' is not just a quote; it's a principle for stress management and long-term vision.
-
-We explore how to integrate deep values into a competitive corporate environment while remaining authentic. Spiritual leadership is not about imposing beliefs, but about acting with impeccable ethics and a sense of service.`,
-    author: "Sophia ONOMO",
-    date: "Avril 2026",
-    category: "Foi & Leadership",
-    category_en: "Faith & Leadership",
-    image: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80&w=1200",
-    isPremium: true
+    "id": "4",
+    "title": "Foi & Leadership : Diriger avec des Valeurs",
+    "title_en": "Faith & Leadership: Leading with Values",
+    "excerpt": "L'impact de la spiritualité dans la prise de décision stratégique pour les leaders africains.",
+    "excerpt_en": "The impact of spirituality on strategic decision-making for African leaders.",
+    "content": "De nombreux leaders de haut niveau puisent leur force dans leur foi. 'Confie-toi à Dieu, pas aux hommes...' n'est pas seulement une citation, c'est un principe de gestion du stress et de vision à long terme. \n\nNous explorons comment intégrer ses valeurs profondes dans un environnement corporate compétitif tout en restant authentique. Le leadership spirituel ne consiste pas à imposer ses croyances, mais à agir avec une éthique irréprochable et un sens du service.",
+    "content_en": "Many high-level leaders draw their strength from their faith. 'Trust in God, not in men...' is not just a quote; it's a principle for stress management and long-term vision.\n\nWe explore how to integrate deep values into a competitive corporate environment while remaining authentic. Spiritual leadership is not about imposing beliefs, but about acting with impeccable ethics and a sense of service.",
+    "author": "Sophia ONOMO",
+    "date": "Avril 2026",
+    "category": "Foi & Leadership",
+    "category_en": "Faith & Leadership",
+    "image": "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": true,
+    "title_es": "Fe y liderazgo: liderar con valores",
+    "excerpt_es": "El impacto de la espiritualidad en la toma de decisiones estratégicas de los líderes africanos.",
+    "content_es": "Muchos líderes de alto nivel obtienen fortaleza de su fe. 'Confía en Dios, no en los hombres...' no es sólo una cita, es un principio de manejo del estrés y de visión a largo plazo. \n\nExploramos cómo integrar valores profundos en un entorno corporativo competitivo sin dejar de ser auténticos. El liderazgo espiritual no se trata de imponer las propias creencias, sino de actuar con una ética impecable y un sentido de servicio.",
+    "category_es": "Foi y Liderazgo"
   },
   {
-    id: '5',
-    title: "Adama Paris : L'architecture d'un idéal",
-    title_en: "Adama Paris: The Architecture of an Ideal",
-    excerpt: "L'architecte qui a donné une scène internationale à la mode africaine. Styliste, entrepreneure et productrice infatigable.",
-    excerpt_en: "The architect who gave African fashion an international stage. Stylist, entrepreneur, and tireless producer.",
-    content: `Figure incontournable de la mode africaine contemporaine, Adama Paris s'est imposée au fil des années comme l'une des figures les plus influentes de l'industrie créative du continent. 
-
-Styliste, entrepreneure, productrice d'événements et promotrice infatigable du « Made in Africa for the world », Adama Amanda Ndiaye a construit un véritable écosystème qui va bien au-delà des podiums. Sa vision est celle d'une Afrique fière de son esthétique et capable de l'exporter avec succès.`,
-    content_en: `An essential figure in contemporary African fashion, Adama Paris has established herself over the years as one of the most influential figures in the continent's creative industry.
-
-Stylist, entrepreneur, event producer, and tireless promoter of "Made in Africa for the world," Adama Amanda Ndiaye has built a true ecosystem that goes far beyond the runways. Her vision is of an Africa proud of its aesthetic and capable of successfully exporting it.`,
-    author: "Ndi Théophile Vital",
-    date: "Avril 2026",
-    category: "Culture",
-    category_en: "Culture",
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=1200",
-    isPremium: true
+    "id": "5",
+    "title": "Adama Paris : L'architecture d'un idéal",
+    "title_en": "Adama Paris: The Architecture of an Ideal",
+    "excerpt": "L'architecte qui a donné une scène internationale à la mode africaine. Styliste, entrepreneure et productrice infatigable.",
+    "excerpt_en": "The architect who gave African fashion an international stage. Stylist, entrepreneur, and tireless producer.",
+    "content": "Figure incontournable de la mode africaine contemporaine, Adama Paris s'est imposée au fil des années comme l'une des figures les plus influentes de l'industrie créative du continent. \n\nStyliste, entrepreneure, productrice d'événements et promotrice infatigable du « Made in Africa for the world », Adama Amanda Ndiaye a construit un véritable écosystème qui va bien au-delà des podiums. Sa vision est celle d'une Afrique fière de son esthétique et capable de l'exporter avec succès.",
+    "content_en": "An essential figure in contemporary African fashion, Adama Paris has established herself over the years as one of the most influential figures in the continent's creative industry.\n\nStylist, entrepreneur, event producer, and tireless promoter of \"Made in Africa for the world,\" Adama Amanda Ndiaye has built a true ecosystem that goes far beyond the runways. Her vision is of an Africa proud of its aesthetic and capable of successfully exporting it.",
+    "author": "Ndi Théophile Vital",
+    "date": "Avril 2026",
+    "category": "Culture",
+    "category_en": "Culture",
+    "image": "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": true,
+    "title_es": "Adama Paris: La arquitectura de un ideal",
+    "excerpt_es": "El arquitecto que dio un escenario internacional a la moda africana. Estilista, emprendedor y productor incansable.",
+    "content_es": "Figura imprescindible de la moda africana contemporánea, Adama Paris se ha consolidado a lo largo de los años como una de las figuras más influyentes de la industria creativa del continente. \n\nEstilista, emprendedora, productora de eventos e incansable promotora de “Made in Africa for the world”, Adama Amanda Ndiaye ha construido un ecosistema real que va mucho más allá de las pasarelas. Su visión es la de un África orgullosa de su estética y capaz de exportarla con éxito.",
+    "category_es": "Cultura"
   },
   {
-    id: '6',
-    title: "Agathe Belobo : L'engagement au féminin",
-    title_en: "Agathe Belobo: Commitment in the Feminine",
-    excerpt: "Portrait d'une femme d'action qui transforme les communautés locales par l'éducation et l'entrepreneuriat.",
-    excerpt_en: "Portrait of a woman of action transforming local communities through education and entrepreneurship.",
-    content: `Agathe Belobo est la preuve vivante que le changement commence à l'échelle locale. À travers ses initiatives, elle a permis à des centaines de femmes de devenir autonomes financièrement.
-
-### L'éducation comme pilier
-Pour Agathe, l'alphabétisation et la formation technique sont les clés de l'émancipation. Elle a fondé plusieurs centres de formation qui accueillent aujourd'hui des jeunes filles déscolarisées pour leur offrir une seconde chance.`,
-    content_en: `Agathe Belobo is living proof that change begins at the local level. Through her initiatives, she has enabled hundreds of women to become financially independent.
-
-### Education as a Pillar
-For Agathe, literacy and technical training are the keys to empowerment. She founded several training centers that today welcome out-of-school girls to offer them a second chance.`,
-    author: "Frank Olivier Kamto Fopossi",
-    date: "Mars 2026",
-    category: "Leadership",
-    category_en: "Leadership",
-    image: "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=1200",
-    isPremium: false
+    "id": "6",
+    "title": "Agathe Belobo : L'engagement au féminin",
+    "title_en": "Agathe Belobo: Commitment in the Feminine",
+    "excerpt": "Portrait d'une femme d'action qui transforme les communautés locales par l'éducation et l'entrepreneuriat.",
+    "excerpt_en": "Portrait of a woman of action transforming local communities through education and entrepreneurship.",
+    "content": "Agathe Belobo est la preuve vivante que le changement commence à l'échelle locale. À travers ses initiatives, elle a permis à des centaines de femmes de devenir autonomes financièrement.\n\n### L'éducation comme pilier\nPour Agathe, l'alphabétisation et la formation technique sont les clés de l'émancipation. Elle a fondé plusieurs centres de formation qui accueillent aujourd'hui des jeunes filles déscolarisées pour leur offrir une seconde chance.",
+    "content_en": "Agathe Belobo is living proof that change begins at the local level. Through her initiatives, she has enabled hundreds of women to become financially independent.\n\n### Education as a Pillar\nFor Agathe, literacy and technical training are the keys to empowerment. She founded several training centers that today welcome out-of-school girls to offer them a second chance.",
+    "author": "Frank Olivier Kamto Fopossi",
+    "date": "Mars 2026",
+    "category": "Leadership",
+    "category_en": "Leadership",
+    "image": "https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": false,
+    "title_es": "Agathe Belobo: compromiso femenino",
+    "excerpt_es": "Retrato de una mujer de acción que transforma comunidades locales a través de la educación y el emprendimiento.",
+    "content_es": "Agathe Belobo es la prueba viviente de que el cambio comienza a nivel local. A través de sus iniciativas, ha permitido que cientos de mujeres se vuelvan financieramente independientes.\n\n### La educación como pilar\nPara Agathe, la alfabetización y la formación técnica son las claves de la emancipación. Fundó varios centros de formación que hoy acogen a jóvenes que han abandonado la escuela para ofrecerles una segunda oportunidad.",
+    "category_es": "Liderazgo"
   },
   {
-    id: '7',
-    title: "L'Entrepreneuriat Féminin en Afrique Centrale",
-    title_en: "Female Entrepreneurship in Central Africa",
-    excerpt: "Défis et opportunités pour les femmes d'affaires dans un marché en pleine mutation.",
-    excerpt_en: "Challenges and opportunities for businesswomen in a rapidly changing market.",
-    content: `L'Afrique Centrale regorge de talents féminins, mais l'accès au financement reste le principal obstacle. Cet article analyse les nouvelles solutions de micro-crédit et de crowdfunding qui émergent pour soutenir les projets portés par des femmes.`,
-    content_en: `Central Africa is full of female talent, but access to finance remains the main obstacle. This article analyzes the new micro-credit and crowdfunding solutions emerging to support projects led by women.`,
-    author: "Dr. Jean-Paul B.",
-    date: "Mars 2026",
-    category: "Business",
-    category_en: "Business",
-    image: "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80&w=1200",
-    isPremium: true
+    "id": "7",
+    "title": "L'Entrepreneuriat Féminin en Afrique Centrale",
+    "title_en": "Female Entrepreneurship in Central Africa",
+    "excerpt": "Défis et opportunités pour les femmes d'affaires dans un marché en pleine mutation.",
+    "excerpt_en": "Challenges and opportunities for businesswomen in a rapidly changing market.",
+    "content": "L'Afrique Centrale regorge de talents féminins, mais l'accès au financement reste le principal obstacle. Cet article analyse les nouvelles solutions de micro-crédit et de crowdfunding qui émergent pour soutenir les projets portés par des femmes.",
+    "content_en": "Central Africa is full of female talent, but access to finance remains the main obstacle. This article analyzes the new micro-credit and crowdfunding solutions emerging to support projects led by women.",
+    "author": "Dr. Jean-Paul B.",
+    "date": "Mars 2026",
+    "category": "Business",
+    "category_en": "Business",
+    "image": "https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": true,
+    "title_es": "Emprendimiento femenino en África Central",
+    "excerpt_es": "Retos y oportunidades para las empresarias en un mercado cambiante.",
+    "content_es": "África Central está llena de talento femenino, pero el acceso a la financiación sigue siendo el principal obstáculo. Este artículo analiza las nuevas soluciones de microcrédito y crowdfunding que están surgiendo para apoyar proyectos liderados por mujeres.",
+    "category_es": "Negocio"
   },
   {
-    id: '8',
-    title: "L'Intelligence Artificielle au service des Femmes",
-    title_en: "Artificial Intelligence at the Service of Women",
-    excerpt: "Comment l'IA peut devenir un levier d'émancipation et de croissance pour les entrepreneures africaines.",
-    excerpt_en: "How AI can become a lever for empowerment and growth for African female entrepreneurs.",
-    content: `L'intelligence artificielle n'est plus une option, c'est une nécessité. Pour les femmes entrepreneures en Afrique, maîtriser ces outils permet de gagner en productivité et d'accéder à de nouveaux marchés mondiaux.`,
-    content_en: `Artificial intelligence is no longer an option; it's a necessity. For female entrepreneurs in Africa, mastering these tools allows for productivity gains and access to new global markets.`,
-    author: "WIL Editorial AI",
-    date: "Avril 2026",
-    category: "Technologie",
-    category_en: "Technology",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200",
-    isPremium: false
+    "id": "8",
+    "title": "L'Intelligence Artificielle au service des Femmes",
+    "title_en": "Artificial Intelligence at the Service of Women",
+    "excerpt": "Comment l'IA peut devenir un levier d'émancipation et de croissance pour les entrepreneures africaines.",
+    "excerpt_en": "How AI can become a lever for empowerment and growth for African female entrepreneurs.",
+    "content": "L'intelligence artificielle n'est plus une option, c'est une nécessité. Pour les femmes entrepreneures en Afrique, maîtriser ces outils permet de gagner en productivité et d'accéder à de nouveaux marchés mondiaux.",
+    "content_en": "Artificial intelligence is no longer an option; it's a necessity. For female entrepreneurs in Africa, mastering these tools allows for productivity gains and access to new global markets.",
+    "author": "WIL Editorial AI",
+    "date": "Avril 2026",
+    "category": "Technologie",
+    "category_en": "Technology",
+    "image": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": false,
+    "title_es": "Inteligencia Artificial al servicio de las Mujeres",
+    "excerpt_es": "Cómo la IA puede convertirse en una palanca de emancipación y crecimiento para las empresarias africanas.",
+    "content_es": "La inteligencia artificial ya no es una opción, es una necesidad. Para las mujeres empresarias en África, dominar estas herramientas les permite aumentar la productividad y acceder a nuevos mercados globales.",
+    "category_es": "Tecnología"
   },
   {
-    id: '9',
-    title: "Équilibre Vie Pro - Vie Perso : Le défi des Leaders",
-    title_en: "Work-Life Balance: The Leaders' Challenge",
-    excerpt: "Conseils pratiques pour concilier ambitions professionnelles et épanouissement familial.",
-    excerpt_en: "Practical advice for balancing professional ambitions and family fulfillment.",
-    content: `Être une leader accomplie ne signifie pas sacrifier sa vie personnelle. Nous avons interrogé dix femmes d'exception sur leurs routines et leurs secrets pour maintenir un équilibre sain.`,
-    content_en: `Being an accomplished leader doesn't mean sacrificing your personal life. We interviewed ten exceptional women about their routines and secrets for maintaining a healthy balance.`,
-    author: "Marie Ndiaye",
-    date: "Avril 2026",
-    category: "Inspiration",
-    category_en: "Inspiration",
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1200",
-    isPremium: true
+    "id": "9",
+    "title": "Équilibre Vie Pro - Vie Perso : Le défi des Leaders",
+    "title_en": "Work-Life Balance: The Leaders' Challenge",
+    "excerpt": "Conseils pratiques pour concilier ambitions professionnelles et épanouissement familial.",
+    "excerpt_en": "Practical advice for balancing professional ambitions and family fulfillment.",
+    "content": "Être une leader accomplie ne signifie pas sacrifier sa vie personnelle. Nous avons interrogé dix femmes d'exception sur leurs routines et leurs secrets pour maintenir un équilibre sain.",
+    "content_en": "Being an accomplished leader doesn't mean sacrificing your personal life. We interviewed ten exceptional women about their routines and secrets for maintaining a healthy balance.",
+    "author": "Marie Ndiaye",
+    "date": "Avril 2026",
+    "category": "Inspiration",
+    "category_en": "Inspiration",
+    "image": "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": true,
+    "title_es": "Equilibrio entre la vida personal y laboral: el desafío para los líderes",
+    "excerpt_es": "Consejos prácticos para conciliar ambiciones profesionales y desarrollo familiar.",
+    "content_es": "Ser un líder exitoso no significa sacrificar tu vida personal. Entrevistamos a diez mujeres excepcionales sobre sus rutinas y secretos para mantener un equilibrio saludable.",
+    "category_es": "Inspiración"
   },
   {
-    id: '10',
-    title: "Le Mentorat : Transmettre pour Pérenniser",
-    title_en: "Mentorship: Transmitting to Sustain",
-    excerpt: "Pourquoi le mentorat est l'outil le plus puissant pour assurer la relève du leadership féminin.",
-    excerpt_en: "Why mentorship is the most powerful tool to ensure the succession of female leadership.",
-    content: `Le mentorat n'est pas seulement un acte de générosité, c'est un investissement stratégique dans l'avenir. Pour les leaders accomplies, transmettre leur savoir-faire et leur réseau est une responsabilité éthique.
-
-### Les bénéfices pour la mentore
-Contrairement aux idées reçues, la mentore apprend autant que la mentorée. Cela permet de rester connectée aux nouvelles réalités du terrain et de questionner ses propres certitudes.
-
-### Créer un écosystème de soutien
-Nous explorons comment mettre en place des programmes de mentorat structurés au sein des organisations pour briser le plafond de verre de manière collective.`,
-    content_en: `Mentorship is not just an act of generosity; it's a strategic investment in the future. For accomplished leaders, passing on their expertise and network is an ethical responsibility.
-
-### Benefits for the Mentor
-Contrary to popular belief, the mentor learns as much as the mentee. This allows them to stay connected to new realities on the ground and question their own certainties.
-
-### Creating a Support Ecosystem
-We explore how to set up structured mentorship programs within organizations to collectively break the glass ceiling.`,
-    author: "Lucie S. MATSOUAKA",
-    date: "Mai 2026",
-    category: "Leadership",
-    category_en: "Leadership",
-    image: "https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&q=80&w=1200",
-    isPremium: false
+    "id": "10",
+    "title": "Le Mentorat : Transmettre pour Pérenniser",
+    "title_en": "Mentorship: Transmitting to Sustain",
+    "excerpt": "Pourquoi le mentorat est l'outil le plus puissant pour assurer la relève du leadership féminin.",
+    "excerpt_en": "Why mentorship is the most powerful tool to ensure the succession of female leadership.",
+    "content": "Le mentorat n'est pas seulement un acte de générosité, c'est un investissement stratégique dans l'avenir. Pour les leaders accomplies, transmettre leur savoir-faire et leur réseau est une responsabilité éthique.\n\n### Les bénéfices pour la mentore\nContrairement aux idées reçues, la mentore apprend autant que la mentorée. Cela permet de rester connectée aux nouvelles réalités du terrain et de questionner ses propres certitudes.\n\n### Créer un écosystème de soutien\nNous explorons comment mettre en place des programmes de mentorat structurés au sein des organisations pour briser le plafond de verre de manière collective.",
+    "content_en": "Mentorship is not just an act of generosity; it's a strategic investment in the future. For accomplished leaders, passing on their expertise and network is an ethical responsibility.\n\n### Benefits for the Mentor\nContrary to popular belief, the mentor learns as much as the mentee. This allows them to stay connected to new realities on the ground and question their own certainties.\n\n### Creating a Support Ecosystem\nWe explore how to set up structured mentorship programs within organizations to collectively break the glass ceiling.",
+    "author": "Lucie S. MATSOUAKA",
+    "date": "Mai 2026",
+    "category": "Leadership",
+    "category_en": "Leadership",
+    "image": "https://images.unsplash.com/photo-1515162305285-0293e4767cc2?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": false,
+    "title_es": "Mentoría: transmitir para sostener",
+    "excerpt_es": "Por qué la mentoría es la herramienta más poderosa para asegurar la sucesión de mujeres líderes.",
+    "content_es": "La tutoría no es sólo un acto de generosidad, es una inversión estratégica en el futuro. Para los líderes consumados, transmitir sus conocimientos y su red es una responsabilidad ética.\n\n### Beneficios para el mentor\nContrariamente a la creencia popular, el mentor aprende tanto como el aprendiz. Esto le permite mantenerse conectado con las nuevas realidades sobre el terreno y cuestionar sus propias certezas.\n\n### Crear un ecosistema de apoyo\nEstamos explorando cómo implementar programas estructurados de tutoría dentro de las organizaciones para romper colectivamente el techo de cristal.",
+    "category_es": "Liderazgo"
   },
   {
-    id: '11',
-    title: "L'Art de la Négociation pour les Femmes",
-    title_en: "The Art of Negotiation for Women",
-    excerpt: "Maîtrisez les techniques de négociation pour obtenir ce que vous méritez dans le monde des affaires.",
-    excerpt_en: "Master negotiation techniques to get what you deserve in the business world.",
-    content: `Négocier n'est pas se battre, c'est trouver un terrain d'entente où votre valeur est reconnue. Trop souvent, les femmes hésitent à demander ce qu'elles méritent par peur d'être perçues comme agressives.
-
-### Préparation et Posture
-La clé d'une négociation réussie réside à 80% dans la préparation. Connaître ses chiffres, son marché et ses alternatives est indispensable.
-
-### Le langage non-verbal
-Apprenez à utiliser votre voix et votre posture pour projeter de l'assurance sans arrogance. Nous décryptons les mécanismes psychologiques à l'œuvre lors des discussions contractuelles.`,
-    content_en: `Negotiating is not fighting; it's finding common ground where your value is recognized. Too often, women hesitate to ask for what they deserve for fear of being perceived as aggressive.
-
-### Preparation and Posture
-The key to a successful negotiation lies 80% in preparation. Knowing your numbers, your market, and your alternatives is essential.
-
-### Non-verbal Language
-Learn to use your voice and posture to project confidence without arrogance. We decode the psychological mechanisms at work during contractual discussions.`,
-    author: "Sophia ONOMO",
-    date: "Mai 2026",
-    category: "Business",
-    category_en: "Business",
-    image: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=1200",
-    isPremium: true
+    "id": "11",
+    "title": "L'Art de la Négociation pour les Femmes",
+    "title_en": "The Art of Negotiation for Women",
+    "excerpt": "Maîtrisez les techniques de négociation pour obtenir ce que vous méritez dans le monde des affaires.",
+    "excerpt_en": "Master negotiation techniques to get what you deserve in the business world.",
+    "content": "Négocier n'est pas se battre, c'est trouver un terrain d'entente où votre valeur est reconnue. Trop souvent, les femmes hésitent à demander ce qu'elles méritent par peur d'être perçues comme agressives.\n\n### Préparation et Posture\nLa clé d'une négociation réussie réside à 80% dans la préparation. Connaître ses chiffres, son marché et ses alternatives est indispensable.\n\n### Le langage non-verbal\nApprenez à utiliser votre voix et votre posture pour projeter de l'assurance sans arrogance. Nous décryptons les mécanismes psychologiques à l'œuvre lors des discussions contractuelles.",
+    "content_en": "Negotiating is not fighting; it's finding common ground where your value is recognized. Too often, women hesitate to ask for what they deserve for fear of being perceived as aggressive.\n\n### Preparation and Posture\nThe key to a successful negotiation lies 80% in preparation. Knowing your numbers, your market, and your alternatives is essential.\n\n### Non-verbal Language\nLearn to use your voice and posture to project confidence without arrogance. We decode the psychological mechanisms at work during contractual discussions.",
+    "author": "Sophia ONOMO",
+    "date": "Mai 2026",
+    "category": "Business",
+    "category_en": "Business",
+    "image": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": true,
+    "title_es": "El arte de la negociación para las mujeres",
+    "excerpt_es": "Domina las habilidades de negociación para conseguir lo que mereces en el mundo empresarial.",
+    "content_es": "Negociar no se trata de pelear, se trata de encontrar puntos en común donde se reconozca su valor. Con demasiada frecuencia, las mujeres se muestran reacias a pedir lo que merecen por miedo a ser percibidas como agresivas.\n\n### Preparación y postura\nLa clave para una negociación exitosa es un 80% de preparación. Conocer tus cifras, tu mercado y tus alternativas es fundamental.\n\n### Lenguaje no verbal\nAprenda a usar su voz y postura para proyectar confianza sin arrogancia. Desciframos los mecanismos psicológicos que actúan durante las discusiones contractuales.",
+    "category_es": "Negocio"
   },
   {
-    id: '12',
-    title: "Santé Mentale et Haute Performance",
-    title_en: "Mental Health and High Performance",
-    excerpt: "Comment préserver son équilibre psychologique tout en visant l'excellence professionnelle.",
-    excerpt_en: "How to preserve your psychological balance while aiming for professional excellence.",
-    content: `Le burn-out n'est pas une fatalité, c'est le signe d'un déséquilibre prolongé. Pour les leaders, la santé mentale doit être traitée avec le même sérieux que la stratégie d'entreprise.
-
-### Détecter les signaux d'alerte
-Apprenez à écouter votre corps et votre esprit avant qu'il ne soit trop tard. La fatigue chronique, l'irritabilité et la perte de motivation sont des indicateurs précieux.
-
-### Rituels de déconnexion
-Nous vous proposons des techniques simples de méditation et de gestion du temps pour créer des espaces de respiration dans des agendas surchargés.`,
-    content_en: `Burnout is not inevitable; it's a sign of a prolonged imbalance. For leaders, mental health must be treated with the same seriousness as business strategy.
-
-### Detecting Warning Signs
-Learn to listen to your body and mind before it's too late. Chronic fatigue, irritability, and loss of motivation are valuable indicators.
-
-### Disconnection Rituals
-We offer simple meditation and time management techniques to create breathing spaces in overloaded schedules.`,
-    author: "Dr. Jean-Paul B.",
-    date: "Mai 2026",
-    category: "Transformation Personnelle",
-    category_en: "Personal Transformation",
-    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1200",
-    isPremium: false
+    "id": "12",
+    "title": "Santé Mentale et Haute Performance",
+    "title_en": "Mental Health and High Performance",
+    "excerpt": "Comment préserver son équilibre psychologique tout en visant l'excellence professionnelle.",
+    "excerpt_en": "How to preserve your psychological balance while aiming for professional excellence.",
+    "content": "Le burn-out n'est pas une fatalité, c'est le signe d'un déséquilibre prolongé. Pour les leaders, la santé mentale doit être traitée avec le même sérieux que la stratégie d'entreprise.\n\n### Détecter les signaux d'alerte\nApprenez à écouter votre corps et votre esprit avant qu'il ne soit trop tard. La fatigue chronique, l'irritabilité et la perte de motivation sont des indicateurs précieux.\n\n### Rituels de déconnexion\nNous vous proposons des techniques simples de méditation et de gestion du temps pour créer des espaces de respiration dans des agendas surchargés.",
+    "content_en": "Burnout is not inevitable; it's a sign of a prolonged imbalance. For leaders, mental health must be treated with the same seriousness as business strategy.\n\n### Detecting Warning Signs\nLearn to listen to your body and mind before it's too late. Chronic fatigue, irritability, and loss of motivation are valuable indicators.\n\n### Disconnection Rituals\nWe offer simple meditation and time management techniques to create breathing spaces in overloaded schedules.",
+    "author": "Dr. Jean-Paul B.",
+    "date": "Mai 2026",
+    "category": "Transformation Personnelle",
+    "category_en": "Personal Transformation",
+    "image": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1200",
+    "isPremium": false,
+    "title_es": "Salud mental y alto rendimiento",
+    "excerpt_es": "Cómo preservar el equilibrio psicológico aspirando a la excelencia profesional.",
+    "content_es": "El agotamiento no es inevitable, es una señal de un desequilibrio prolongado. Para los líderes, la salud mental debe tratarse con la misma seriedad que la estrategia empresarial.\n\n### Detectar señales de advertencia\nAprenda a escuchar su cuerpo y su mente antes de que sea demasiado tarde. La fatiga crónica, la irritabilidad y la pérdida de motivación son indicadores valiosos.\n\n### Rituales de desconexión\nOfrecemos técnicas sencillas de meditación y gestión del tiempo para crear un respiro en agendas ocupadas.",
+    "category_es": "Transformación Personal"
   }
 ];
 
 export const VIDEOS: Video[] = [
   {
-    id: 'v1',
-    title: "Interview Exclusive : Lucie S. MATSOUAKA",
-    title_en: "Exclusive Interview: Lucie S. MATSOUAKA",
-    thumbnail: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    duration: "45:00",
-    category: "Interview",
-    category_en: "Interview",
-    description: "Une plongée profonde dans l'esprit d'une leader visionnaire qui transforme l'Afrique.",
-    description_en: "A deep dive into the mind of a visionary leader transforming Africa."
+    "id": "v1",
+    "title": "Interview Exclusive : Lucie S. MATSOUAKA",
+    "title_en": "Exclusive Interview: Lucie S. MATSOUAKA",
+    "thumbnail": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "duration": "45:00",
+    "category": "Interview",
+    "category_en": "Interview",
+    "description": "Une plongée profonde dans l'esprit d'une leader visionnaire qui transforme l'Afrique.",
+    "description_en": "A deep dive into the mind of a visionary leader transforming Africa.",
+    "title_es": "Entrevista exclusiva: Lucie S. MATSOUAKA",
+    "description_es": "Una inmersión profunda en la mente de un líder visionario que está transformando África.",
+    "category_es": "Entrevista"
   },
   {
-    id: 'v2',
-    title: "Masterclass : Psychologie du Succès",
-    title_en: "Masterclass: Psychology of Success",
-    thumbnail: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    duration: "1:20:00",
-    category: "Masterclass",
-    category_en: "Masterclass",
-    description: "Apprenez à maîtriser votre mentalité pour atteindre vos objectifs les plus ambitieux.",
-    description_en: "Learn to master your mindset to achieve your most ambitious goals."
+    "id": "v2",
+    "title": "Masterclass : Psychologie du Succès",
+    "title_en": "Masterclass: Psychology of Success",
+    "thumbnail": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=800",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "duration": "1:20:00",
+    "category": "Masterclass",
+    "category_en": "Masterclass",
+    "description": "Apprenez à maîtriser votre mentalité pour atteindre vos objectifs les plus ambitieux.",
+    "description_en": "Learn to master your mindset to achieve your most ambitious goals.",
+    "title_es": "Masterclass: Psicología del éxito",
+    "description_es": "Aprenda a dominar su forma de pensar para lograr sus objetivos más ambiciosos.",
+    "category_es": "Clase magistral"
   },
   {
-    id: 'v3',
-    title: "Documentaire : Rose Leke et la Science Africaine",
-    title_en: "Documentary: Rose Leke and African Science",
-    thumbnail: "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    duration: "52:00",
-    category: "Documentaire",
-    category_en: "Documentary",
-    description: "Le combat des femmes africaines pour l'excellence scientifique mondiale.",
-    description_en: "The fight of African women for global scientific excellence."
+    "id": "v3",
+    "title": "Documentaire : Rose Leke et la Science Africaine",
+    "title_en": "Documentary: Rose Leke and African Science",
+    "thumbnail": "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "duration": "52:00",
+    "category": "Documentaire",
+    "category_en": "Documentary",
+    "description": "Le combat des femmes africaines pour l'excellence scientifique mondiale.",
+    "description_en": "The fight of African women for global scientific excellence.",
+    "title_es": "Documental: Rose Leke y la ciencia africana",
+    "description_es": "La lucha de las mujeres africanas por la excelencia científica global.",
+    "category_es": "Documental"
   },
   {
-    id: 'v4',
-    title: "Reportage : Dakar Fashion Week",
-    title_en: "Report: Dakar Fashion Week",
-    thumbnail: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=800",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    duration: "15:00",
-    category: "Reportage",
-    category_en: "Report",
-    description: "Dans les coulisses de l'événement mode le plus prestigieux d'Afrique de l'Ouest.",
-    description_en: "Behind the scenes of West Africa's most prestigious fashion event."
+    "id": "v4",
+    "title": "Reportage : Dakar Fashion Week",
+    "title_en": "Report: Dakar Fashion Week",
+    "thumbnail": "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=800",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "duration": "15:00",
+    "category": "Reportage",
+    "category_en": "Report",
+    "description": "Dans les coulisses de l'événement mode le plus prestigieux d'Afrique de l'Ouest.",
+    "description_en": "Behind the scenes of West Africa's most prestigious fashion event.",
+    "title_es": "Reportaje : Semana de la Moda de Dakar",
+    "description_es": "Detrás de escena del evento de moda más prestigioso de África Occidental.",
+    "category_es": "Reportaje"
   },
   {
-    id: 'v5',
-    title: "Talk : L'avenir du Digital en Afrique",
-    title_en: "Talk: The Future of Digital in Africa",
-    thumbnail: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    duration: "28:10",
-    category: "Technologie",
-    category_en: "Technology",
-    description: "Une discussion passionnante sur les enjeux de la transformation numérique.",
-    description_en: "An exciting discussion on the challenges of digital transformation."
+    "id": "v5",
+    "title": "Talk : L'avenir du Digital en Afrique",
+    "title_en": "Talk: The Future of Digital in Africa",
+    "thumbnail": "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=800",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "duration": "28:10",
+    "category": "Technologie",
+    "category_en": "Technology",
+    "description": "Une discussion passionnante sur les enjeux de la transformation numérique.",
+    "description_en": "An exciting discussion on the challenges of digital transformation.",
+    "title_es": "Charla: El futuro de lo digital en África",
+    "description_es": "Un debate fascinante sobre los desafíos de la transformación digital.",
+    "category_es": "Tecnología"
   },
   {
-    id: 'v6',
-    title: "Portrait : Les Femmes de l'Ombre",
-    title_en: "Portrait: Women in the Shadows",
-    thumbnail: "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&q=80&w=800",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    duration: "18:45",
-    category: "Société",
-    category_en: "Society",
-    description: "Célébration des femmes qui œuvrent quotidiennement pour le bien-être de leurs communautés.",
-    description_en: "Celebrating women who work daily for the well-being of their communities."
+    "id": "v6",
+    "title": "Portrait : Les Femmes de l'Ombre",
+    "title_en": "Portrait: Women in the Shadows",
+    "thumbnail": "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?auto=format&fit=crop&q=80&w=800",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "duration": "18:45",
+    "category": "Société",
+    "category_en": "Society",
+    "description": "Célébration des femmes qui œuvrent quotidiennement pour le bien-être de leurs communautés.",
+    "description_en": "Celebrating women who work daily for the well-being of their communities.",
+    "title_es": "Retrato: Mujeres de la sombra",
+    "description_es": "Celebración de las mujeres que trabajan diariamente por el bienestar de sus comunidades.",
+    "category_es": "Compañía"
   },
   {
-    id: 'v7',
-    title: "Table Ronde : L'Éducation des Filles en Afrique",
-    title_en: "Round Table: Girls' Education in Africa",
-    thumbnail: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    duration: "1:05:00",
-    category: "Société",
-    category_en: "Society",
-    description: "Débat passionné sur les leviers pour accélérer la scolarisation des jeunes filles dans les zones rurales.",
-    description_en: "Passionate debate on levers to accelerate girls' schooling in rural areas."
+    "id": "v7",
+    "title": "Table Ronde : L'Éducation des Filles en Afrique",
+    "title_en": "Round Table: Girls' Education in Africa",
+    "thumbnail": "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "duration": "1:05:00",
+    "category": "Société",
+    "category_en": "Society",
+    "description": "Débat passionné sur les leviers pour accélérer la scolarisation des jeunes filles dans les zones rurales.",
+    "description_en": "Passionate debate on levers to accelerate girls' schooling in rural areas.",
+    "title_es": "Mesa redonda: Educación de las niñas en África",
+    "description_es": "Apasionado debate sobre las palancas para acelerar la educación de las niñas en las zonas rurales.",
+    "category_es": "Compañía"
   },
   {
-    id: 'v8',
-    title: "Tutoriel : Pitcher son Projet avec Impact",
-    title_en: "Tutorial: Pitching Your Project with Impact",
-    thumbnail: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=800",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    duration: "25:30",
-    category: "Masterclass",
-    category_en: "Masterclass",
-    description: "Les secrets d'un pitch convaincant pour séduire les investisseurs et partenaires.",
-    description_en: "The secrets of a convincing pitch to attract investors and partners."
+    "id": "v8",
+    "title": "Tutoriel : Pitcher son Projet avec Impact",
+    "title_en": "Tutorial: Pitching Your Project with Impact",
+    "thumbnail": "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=800",
+    "videoUrl": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+    "duration": "25:30",
+    "category": "Masterclass",
+    "category_en": "Masterclass",
+    "description": "Les secrets d'un pitch convaincant pour séduire les investisseurs et partenaires.",
+    "description_en": "The secrets of a convincing pitch to attract investors and partners.",
+    "title_es": "Tutorial: Presentar su proyecto con impacto",
+    "description_es": "Los secretos de un discurso convincente para atraer inversores y socios.",
+    "category_es": "Clase magistral"
   }
 ];
 
 export const MAGAZINES: Magazine[] = [
   {
-    id: 'm1',
-    title: "WIL Mag N°001 - Édition Prestige",
-    title_en: "WIL Mag N°001 - Prestige Edition",
-    issueDate: "Avril 2026",
-    issueDate_en: "April 2026",
-    coverImage: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
-    pdfUrl: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-    description: "Édition Prestige : L'essence du leadership avec Lucie S. MATSOUAKA. Découvrez les portraits des femmes qui font bouger les lignes sur le continent.",
-    description_en: "Prestige Edition: The essence of leadership with Lucie S. MATSOUAKA. Discover portraits of women moving the lines on the continent."
+    "id": "m1",
+    "title": "WIL Mag N°001 - Édition Prestige",
+    "title_en": "WIL Mag N°001 - Prestige Edition",
+    "issueDate": "Avril 2026",
+    "issueDate_en": "April 2026",
+    "coverImage": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=800",
+    "pdfUrl": "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
+    "description": "Édition Prestige : L'essence du leadership avec Lucie S. MATSOUAKA. Découvrez les portraits des femmes qui font bouger les lignes sur le continent.",
+    "description_en": "Prestige Edition: The essence of leadership with Lucie S. MATSOUAKA. Discover portraits of women moving the lines on the continent.",
+    "title_es": "WIL Mag N°001 - Edición Prestigio",
+    "description_es": "Edición Prestige: La esencia del liderazgo con Lucie S. MATSOUAKA. Descubra los retratos de las mujeres que están revolucionando el continente.",
+    "issueDate_es": "abril de 2026"
   }
 ];
 
 export const EVENTS: Event[] = [
   {
-    id: 'e1',
-    title: 'Women Impact Summit 2026',
-    title_en: 'Women Impact Summit 2026',
-    date: '24 Avril 2026',
-    date_en: 'April 24, 2026',
-    location: 'Yaoundé, Cameroun',
-    location_en: 'Yaoundé, Cameroon',
-    description: 'Cérémonie de lancement de WIL magazine à l\'hôtel Djeuga Palace. Le plus grand rassemblement de femmes leaders en Afrique Centrale.',
-    description_en: 'WIL magazine launch ceremony at the Djeuga Palace Hotel. The largest gathering of female leaders in Central Africa.',
-    image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=1200',
-    price: '50 000 FCFA',
-    attendees: '500+'
+    "id": "e1",
+    "title": "Women Impact Summit 2026",
+    "title_en": "Women Impact Summit 2026",
+    "date": "24 Avril 2026",
+    "date_en": "April 24, 2026",
+    "location": "Yaoundé, Cameroun",
+    "location_en": "Yaoundé, Cameroon",
+    "description": "Cérémonie de lancement de WIL magazine à l'hôtel Djeuga Palace. Le plus grand rassemblement de femmes leaders en Afrique Centrale.",
+    "description_en": "WIL magazine launch ceremony at the Djeuga Palace Hotel. The largest gathering of female leaders in Central Africa.",
+    "image": "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80&w=1200",
+    "price": "50 000 FCFA",
+    "attendees": "500+",
+    "title_es": "Cumbre de Impacto de las Mujeres 2026",
+    "description_es": "Ceremonia de presentación de la revista WIL en el hotel Djouga Palace. El mayor encuentro de mujeres líderes de África Central.",
+    "location_es": "Yaundé, Camerún",
+    "date_es": "24 de abril de 2026"
   },
   {
-    id: 'e2',
-    title: 'Gala Women Impact Awards',
-    title_en: 'Women Impact Awards Gala',
-    date: '15 Juillet 2026',
-    date_en: 'July 15, 2026',
-    location: 'Douala, Cameroun',
-    location_en: 'Douala, Cameroon',
-    description: 'Célébration de l\'excellence féminine africaine. Remise de prix aux femmes les plus influentes de l\'année.',
-    description_en: 'Celebrating African female excellence. Award ceremony for the most influential women of the year.',
-    image: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=1200',
-    price: '100 000 FCFA',
-    attendees: '300+'
+    "id": "e2",
+    "title": "Gala Women Impact Awards",
+    "title_en": "Women Impact Awards Gala",
+    "date": "15 Juillet 2026",
+    "date_en": "July 15, 2026",
+    "location": "Douala, Cameroun",
+    "location_en": "Douala, Cameroon",
+    "description": "Célébration de l'excellence féminine africaine. Remise de prix aux femmes les plus influentes de l'année.",
+    "description_en": "Celebrating African female excellence. Award ceremony for the most influential women of the year.",
+    "image": "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&q=80&w=1200",
+    "price": "100 000 FCFA",
+    "attendees": "300+",
+    "title_es": "Gala Premios Impacto Mujer",
+    "description_es": "Celebración de la excelencia femenina africana. Entrega de premios a las mujeres más influyentes del año.",
+    "location_es": "Duala, Camerún",
+    "date_es": "15 de julio de 2026"
   },
   {
-    id: 'e3',
-    title: 'Masterclass : Stratégies de Croissance 2026',
-    title_en: 'Masterclass: Growth Strategies 2026',
-    date: '10 Septembre 2026',
-    date_en: 'September 10, 2026',
-    location: 'Douala, Cameroun',
-    location_en: 'Douala, Cameroon',
-    description: 'Une journée intensive pour booster votre business avec les meilleurs experts en stratégie et finance.',
-    description_en: 'An intensive day to boost your business with the best strategy and finance experts.',
-    image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1200',
-    price: '75 000 FCFA',
-    attendees: '100+'
+    "id": "e3",
+    "title": "Masterclass : Stratégies de Croissance 2026",
+    "title_en": "Masterclass: Growth Strategies 2026",
+    "date": "10 Septembre 2026",
+    "date_en": "September 10, 2026",
+    "location": "Douala, Cameroun",
+    "location_en": "Douala, Cameroon",
+    "description": "Une journée intensive pour booster votre business avec les meilleurs experts en stratégie et finance.",
+    "description_en": "An intensive day to boost your business with the best strategy and finance experts.",
+    "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&q=80&w=1200",
+    "price": "75 000 FCFA",
+    "attendees": "100+",
+    "title_es": "Masterclass: Estrategias de Crecimiento 2026",
+    "description_es": "Una jornada intensiva para impulsar tu negocio de la mano de los mejores expertos en estrategia y finanzas.",
+    "location_es": "Duala, Camerún",
+    "date_es": "10 de septiembre de 2026"
   }
 ];
