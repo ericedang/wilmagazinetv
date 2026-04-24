@@ -164,8 +164,8 @@ export default function Subscribe() {
     {
       id: 'price_monthly_placeholder',
       name: t('common.monthly'),
-      price: '9.99',
-      priceFCFA: '6 500',
+      price: '2.50',
+      priceFCFA: '1 500',
       period: t('common.per_month') || '/mois',
       features: [
         t('unlimited_articles'),
@@ -179,8 +179,8 @@ export default function Subscribe() {
     {
       id: 'price_yearly_placeholder',
       name: t('common.yearly'),
-      price: '89',
-      priceFCFA: '58 000',
+      price: '25.00',
+      priceFCFA: '15 000',
       period: t('common.per_year') || '/an',
       features: [
         t('all_monthly_content'),
@@ -220,11 +220,13 @@ export default function Subscribe() {
               )}
               
               <h3 className="font-serif text-3xl mb-4">{plan.name}</h3>
-              <div className="text-4xl font-serif text-burgundy mb-2">
-                {plan.price} € <span className="text-sm text-gray-400 font-sans tracking-normal">{plan.period}</span>
+              <div className="text-5xl font-serif text-burgundy mb-2">
+                {plan.priceFCFA} <span className="text-2xl font-sans tracking-normal">FCFA</span>
               </div>
-              <div className="text-2xl font-serif text-gray-400 mb-8">
-                {plan.priceFCFA} FCFA <span className="text-sm font-sans tracking-normal">{plan.period}</span>
+              <div className="text-lg font-medium text-gray-500 mb-8 flex items-center justify-center gap-2">
+                <span>{plan.price.replace('.', ',')} €</span>
+                <span className="text-gray-300">•</span>
+                <span>{plan.period}</span>
               </div>
 
               <ul className="text-sm text-gray-500 space-y-5 mb-12 flex-grow text-left max-w-xs mx-auto">
