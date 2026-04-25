@@ -27,6 +27,11 @@ async function startServer() {
     next();
   });
 
+  // Expose configuration securely
+  app.get('/api/config', (req, res) => {
+    res.json({ geminiApiKey: process.env.GEMINI_API_KEY });
+  });
+
   // Stripe Checkout Session Endpoint
   app.post("/api/create-checkout-session", async (req, res) => {
     if (!stripe) {
