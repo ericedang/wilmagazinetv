@@ -17,12 +17,7 @@ async function startServer() {
   const PORT = 3000;
 
   app.use(express.json({ limit: '50mb' }));
-
-  // Expose Gemini key to authenticated routes
-  app.get("/api/config", (req, res) => {
-    res.json({ geminiApiKey: process.env.GEMINI_API_KEY });
-  });
-
+  
   // Set Content Security Policy headers
   app.use((req, res, next) => {
     res.setHeader(

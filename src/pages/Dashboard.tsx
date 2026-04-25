@@ -513,12 +513,7 @@ export default function Dashboard() {
     setError(null);
     
     try {
-      const configRes = await fetch('/api/config');
-      const { geminiApiKey } = await configRes.json();
-      if (!geminiApiKey) {
-        throw new Error("L'API key Gemini est manquante. Vérifiez les paramètres de production.");
-      }
-      const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       
       const prompt = `You are a world-class AI editorial assistant for "Women In Leadership" (WIL), a premium African media platform.
         
@@ -605,7 +600,7 @@ export default function Dashboard() {
         ];
 
         response = await ai.models.generateContent({
-          model: "gemini-3.1-pro-preview",
+          model: "gemini-2.5-flash",
           contents: {
             parts: parts
           },
@@ -617,7 +612,7 @@ export default function Dashboard() {
         });
       } else {
         response = await ai.models.generateContent({
-          model: "gemini-3.1-pro-preview",
+          model: "gemini-2.5-flash",
           contents: `${prompt}\n\nINPUT:\n${aiInput}`,
           config: {
             responseMimeType: "application/json",
@@ -652,12 +647,7 @@ export default function Dashboard() {
     setIsTranslating(true);
     setSeedStatus('Traduction en cours...');
     try {
-      const configRes = await fetch('/api/config');
-      const { geminiApiKey } = await configRes.json();
-      if (!geminiApiKey) {
-        throw new Error("L'API key Gemini est manquante.");
-      }
-      const ai = new GoogleGenAI({ apiKey: geminiApiKey });
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       
       const translateField = async (text: string) => {
         if (!text) return '';
