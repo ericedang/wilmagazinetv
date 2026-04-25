@@ -16,6 +16,8 @@ import BreakingNewsBar from './components/BreakingNewsBar';
 import { useScrollToHash } from './hooks/useScrollToHash';
 import { Toaster } from 'react-hot-toast';
 
+import Galeries from './pages/Galeries';
+
 class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean, error: any }> {
   state = { hasError: false, error: null as any };
   constructor(props: { children: ReactNode }) {
@@ -51,6 +53,7 @@ export default function App() {
               <Route path="/articles" element={<Articles />} />
               <Route path="/articles/:id" element={<ArticleDetail />} />
               <Route path="/events" element={<Events />} />
+              <Route path="/galeries" element={<Galeries />} />
               <Route path="/subscribe" element={<Subscribe />} />
               <Route path="/dashboard" element={<ErrorBoundary><Dashboard /></ErrorBoundary>} />
             </Routes>

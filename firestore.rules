@@ -111,6 +111,12 @@ service cloud.firestore {
       allow write: if isEditorOrAdmin();
     }
 
+    // Galeries Collection
+    match /galeries/{galerieId} {
+      allow read: if true;
+      allow write: if isEditorOrAdmin();
+    }
+
     // Custom Sections Collection
     match /custom_sections/{sectionId} {
       allow read: if true;

@@ -42,14 +42,9 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, onClose 
 
   const handleDownload = (e: React.MouseEvent) => {
     e.preventDefault();
-    const link = document.createElement('a');
-    link.href = safePdfUrl;
-    link.download = `${title}.pdf`;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    import('../lib/download').then(({ downloadFile }) => {
+      downloadFile(safePdfUrl, `${title}.pdf`);
+    });
   };
 
   // Convert Google Drive view URLs to preview URLs for native robust embedding

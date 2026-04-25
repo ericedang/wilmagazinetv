@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Search, User, PlayCircle, BookOpen, Crown, Mail as MailIcon } from 'lucide-react';
+import { Menu, X, Search, User, PlayCircle, BookOpen, Crown, Mail as MailIcon, Image as ImageIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { cn } from '../lib/utils';
 import { useAuth } from '../contexts/AuthContext';
@@ -27,6 +27,7 @@ export default function Navbar() {
     { name: t('tv'), path: '/tv', icon: <PlayCircle className="w-4 h-4" /> },
     { name: t('articles'), path: '/articles', icon: <Search className="w-4 h-4" /> },
     { name: t('events'), path: '/events', icon: <Crown className="w-4 h-4" /> },
+    { name: t('galeries'), path: '/galeries', icon: <ImageIcon className="w-4 h-4" /> },
     { name: t('contact'), path: '/#contact', icon: <MailIcon className="w-4 h-4" /> },
   ];
 

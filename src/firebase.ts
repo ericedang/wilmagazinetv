@@ -13,7 +13,7 @@ const db = initializeFirestore(app, {
 }, firebaseConfig.firestoreDatabaseId || undefined);
 
 const auth = getAuth(app);
-const storage = getStorage(app, `gs://${firebaseConfig.storageBucket}`);
+const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
 
 // Error Handling Spec for Firestore Operations

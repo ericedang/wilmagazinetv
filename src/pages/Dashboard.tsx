@@ -23,6 +23,8 @@ import { toast } from 'react-hot-toast';
 import { downloadFile } from '../lib/download';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
+import GaleriesAdmin from '../components/admin/GaleriesAdmin';
+
 export default function Dashboard() {
   const { user, profile, loading } = useAuth();
   const { t } = useTranslation();
@@ -1682,6 +1684,15 @@ export default function Dashboard() {
                       <Calendar size={16} /> {t('events') || 'Évènements'}
                     </button>
                     <button 
+                      onClick={() => setActiveTab('galeries-mgmt')}
+                      className={cn(
+                        "w-full flex items-center gap-3 p-3 transition-all",
+                        activeTab === 'galeries-mgmt' ? "bg-white shadow-sm text-burgundy" : "hover:bg-white"
+                      )}
+                    >
+                      <Image size={16} /> {t('galeries') || 'Galeries'}
+                    </button>
+                    <button 
                       onClick={() => setActiveTab('reservations-mgmt')}
                       className={cn(
                         "w-full flex items-center gap-3 p-3 transition-all",
@@ -3168,6 +3179,8 @@ export default function Dashboard() {
                 </div>
               </div>
             </motion.div>
+          ) : activeTab === 'galeries-mgmt' ? (
+            <GaleriesAdmin />
           ) : activeTab === 'events-mgmt' ? (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
