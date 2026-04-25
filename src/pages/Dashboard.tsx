@@ -600,7 +600,7 @@ export default function Dashboard() {
         ];
 
         response = await ai.models.generateContent({
-          model: "gemini-3-flash-preview",
+          model: "gemini-3.1-pro-preview",
           contents: {
             parts: parts
           },
@@ -612,7 +612,7 @@ export default function Dashboard() {
         });
       } else {
         response = await ai.models.generateContent({
-          model: "gemini-3-flash-preview",
+          model: "gemini-3.1-pro-preview",
           contents: `${prompt}\n\nINPUT:\n${aiInput}`,
           config: {
             responseMimeType: "application/json",
@@ -834,7 +834,7 @@ export default function Dashboard() {
         };
         reader.readAsText(file);
       }
-      else if (file.type.startsWith('image/') || file.type === 'application/pdf') {
+      else if (file.type.startsWith('image/') || file.type === 'application/pdf' || fileName.endsWith('.pdf')) {
         reader.onload = () => {
           const result = reader.result as string;
           if (result && result.includes(',')) {
