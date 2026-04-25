@@ -108,7 +108,7 @@ export default function ArticleDetail() {
 
   // Remove the early return block for article.isPremium to allow viewing the header/image
 
-  const isPremiumRestriction = !isPremium; // Applicable to all non-subscribers for all articles
+  const isPremiumRestriction = article.isPremium && !isPremium; // Applicable only if article is premium and user is not subscribed
 
   const getTruncatedContent = (content: string) => {
     const paragraphs = content.split('\n\n');
