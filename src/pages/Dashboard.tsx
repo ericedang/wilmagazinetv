@@ -513,7 +513,12 @@ export default function Dashboard() {
     setError(null);
     
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+      const configRes = await fetch('/api/config');
+      const { geminiApiKey } = await configRes.json();
+      if (!geminiApiKey) {
+        throw new Error("L'API key Gemini est manquante. Vérifiez les paramètres de production.");
+      }
+      const ai = new GoogleGenAI({ apiKey: geminiApiKey });
       
       const prompt = `You are a world-class AI editorial assistant for "Women In Leadership" (WIL), a premium African media platform.
         
@@ -647,7 +652,12 @@ export default function Dashboard() {
     setIsTranslating(true);
     setSeedStatus('Traduction en cours...');
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+      const configRes = await fetch('/api/config');
+      const { geminiApiKey } = await configRes.json();
+      if (!geminiApiKey) {
+        throw new Error("L'API key Gemini est manquante.");
+      }
+      const ai = new GoogleGenAI({ apiKey: geminiApiKey });
       
       const translateField = async (text: string) => {
         if (!text) return '';
