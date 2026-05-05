@@ -52,6 +52,7 @@ export default function Dashboard() {
   const [newAnnouncement, setNewAnnouncement] = React.useState('');
   const [isAddingAnnouncement, setIsAddingAnnouncement] = React.useState(false);
   const [isArticleModalOpen, setIsArticleModalOpen] = React.useState(false);
+  const [selectedArticles, setSelectedArticles] = React.useState<string[]>([]);
   const [selectedSection, setSelectedSection] = React.useState<any>(null);
   const [isPageBuilderEditing, setIsPageBuilderEditing] = React.useState(false);
   const [magazineData, setMagazineData] = useLocalStorage('draft_magazine', { title: '', issueDate: '', pdfUrl: '', coverImage: '' });
@@ -442,6 +443,37 @@ export default function Dashboard() {
         setConfirmModal(null);
       }
     });
+  };
+
+  const handleBulkDelete = (collectionName: string, ids: string[]) => {
+    if (ids.length === 0) return;
+    setConfirmModal({
+      isOpen: true,
+      title: t('dashboard_confirm_delete'),
+      message: `Êtes-vous sûr de vouloir supprimer ces ${ids.length} élément(s) ? Cette action est irréversible.`,
+      onConfirm: async () => {
+        try {
+          // Note: using Promise.all for simplicity. Batches could be used for scale
+          await Promise.all(ids.map(id => deleteDoc(doc(db, collectionName, id))));
+          showStatus(`Suppression de ${ids.length} élément(s) réussie`);
+          if (collectionName === 'articles') setSelectedArticles([]);
+        } catch (error) {
+          handleFirestoreError(error, OperationType.DELETE, `${collectionName}/bulk`);
+        }
+        setConfirmModal(null);
+      }
+    });
+  };
+
+  const handleBulkVisibility = async (collectionName: string, ids: string[], isHidden: boolean) => {
+    if (ids.length === 0) return;
+    try {
+      await Promise.all(ids.map(id => updateDoc(doc(db, collectionName, id), { isHidden })));
+      showStatus(isHidden ? `${ids.length} élément(s) masqué(s)` : `${ids.length} élément(s) visible(s)`);
+      if (collectionName === 'articles') setSelectedArticles([]);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `${collectionName}/bulk`);
+    }
   };
 
   const handleUpdateSection = async () => {
@@ -2039,11 +2071,55 @@ export default function Dashboard() {
                   </button>
                 </div>
               </div>
+              <div className="flex justify-between items-center bg-gray-50 p-4 border border-gray-100 rounded-t-sm shadow-sm">
+                <div className="flex items-center gap-4">
+                  <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">
+                    {selectedArticles.length} sélectionné(s)
+                  </span>
+                  {selectedArticles.length > 0 && (
+                    <div className="flex items-center gap-2">
+                       <button
+                        onClick={() => handleBulkDelete('articles', selectedArticles)}
+                        className="bg-red-50 text-red-600 hover:bg-red-100 px-4 py-1.5 text-[10px] uppercase tracking-widest font-bold transition-colors flex items-center gap-2 rounded"
+                      >
+                        <Trash2 size={12} /> Tous Supprimer
+                      </button>
+                      <button
+                        onClick={() => handleBulkVisibility('articles', selectedArticles, true)}
+                        className="bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-1.5 text-[10px] uppercase tracking-widest font-bold transition-colors flex items-center gap-2 rounded"
+                      >
+                        Masquer
+                      </button>
+                      <button
+                        onClick={() => handleBulkVisibility('articles', selectedArticles, false)}
+                        className="bg-green-50 text-green-700 hover:bg-green-100 px-4 py-1.5 text-[10px] uppercase tracking-widest font-bold transition-colors flex items-center gap-2 rounded"
+                      >
+                        Afficher
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
               <div className="bg-white border border-gray-100 shadow-sm overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-gray-50 border-b border-gray-100 uppercase tracking-widest font-bold text-gray-400">
                     <tr>
+                      <th className="p-4 w-12">
+                        <input 
+                          type="checkbox"
+                          className="accent-gold w-4 h-4"
+                          checked={selectedArticles.length === articles.length && articles.length > 0}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedArticles(articles.map(a => a.id));
+                            } else {
+                              setSelectedArticles([]);
+                            }
+                          }}
+                        />
+                      </th>
                       <th className="p-4">{t('dashboard_title')}</th>
+                      <th className="p-4">Statut</th>
                       <th className="p-4">{t('dashboard_category')}</th>
                       <th className="p-4">{t('dashboard_author')}</th>
                       <th className="p-4">{t('dashboard_actions')}</th>
@@ -2051,8 +2127,33 @@ export default function Dashboard() {
                   </thead>
                   <tbody className="divide-y divide-gray-100">
                     {articles.map(article => (
-                      <tr key={article.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="p-4 font-medium">{article.title}</td>
+                      <tr key={article.id} className={cn("hover:bg-gray-50 transition-colors", article.isHidden ? "opacity-60 bg-gray-50" : "")}>
+                        <td className="p-4">
+                          <input 
+                            type="checkbox"
+                            className="accent-gold w-4 h-4"
+                            checked={selectedArticles.includes(article.id)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedArticles([...selectedArticles, article.id]);
+                              } else {
+                                setSelectedArticles(selectedArticles.filter(id => id !== article.id));
+                              }
+                            }}
+                          />
+                        </td>
+                        <td className="p-4 font-medium">
+                          {article.title}
+                          {article.isHidden && <span className="ml-2 text-[10px] bg-gray-200 text-gray-600 px-2 py-0.5 rounded uppercase tracking-widest">Masqué</span>}
+                        </td>
+                        <td className="p-4">
+                            <span className={cn(
+                                "text-[10px] uppercase tracking-widest font-bold px-2 py-1 rounded",
+                                article.isHidden ? "bg-gray-200 text-gray-600" : "bg-green-100 text-green-700"
+                            )}>
+                                {article.isHidden ? 'Masqué' : 'Visible'}
+                            </span>
+                        </td>
                         <td className="p-4">{article.category}</td>
                         <td className="p-4">{article.author}</td>
                         <td className="p-4 flex gap-2">

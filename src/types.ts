@@ -16,6 +16,7 @@ export interface Article {
   category_es?: string;
   image: string;
   isPremium: boolean;
+  isHidden?: boolean;
 }
 
 export interface Video {

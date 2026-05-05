@@ -24,8 +24,8 @@ export default function Articles() {
   ];
 
   const filteredArticles = activeCategory === 'Tous' 
-    ? articles 
-    : articles.filter(a => a.category === activeCategory);
+    ? articles.filter(a => !a.isHidden)
+    : articles.filter(a => a.category === activeCategory && !a.isHidden);
 
   if (loading) {
     return (
