@@ -381,19 +381,6 @@ export default function TV() {
     <div className="min-h-[100dvh] bg-black pb-12">
       <PageBuilder pageSlug="tv" nativeSections={nativeSections} />
 
-      {/* Scrolling Ticker */}
-      <div className="fixed bottom-0 left-0 w-full bg-black/90 backdrop-blur-md border-t border-white/10 z-[60] h-12 flex items-center overflow-hidden">
-        <div className="flex-none bg-gold text-black px-4 h-full flex items-center font-bold text-[10px] uppercase tracking-widest z-10">
-          INFO LIVE
-        </div>
-        <div className="flex-grow">
-          <div className="animate-marquee whitespace-nowrap flex gap-20 items-center">
-            <span className="text-white text-xs font-serif italic">{tickerText}</span>
-            <span className="text-white text-xs font-serif italic">{tickerText}</span>
-          </div>
-        </div>
-      </div>
-
       {/* Video Modal Overlay */}
       <AnimatePresence>
         {selectedVideo && (

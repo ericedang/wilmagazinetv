@@ -40,19 +40,27 @@ const BreakingNewsBar = () => {
     };
   }, []);
 
-  if (announcements.length === 0 || !isVisiblePage) return null;
+  const activeAnnouncements = announcements.filter(a => a.isActive !== false);
+  const textLength = activeAnnouncements.reduce((acc, a) => acc + (a.text?.length || 0), 0);
+  
+  // Base duration is calculated from text length so it doesn't move weirdly fast if there's a lot of text
+  // We want larger 'speed' values (10 to 300) to result in FASTER movement (lower duration)
+  const baseDuration = Math.max(30, textLength * 0.8); 
+  const totalDuration = (baseDuration * 100) / Math.max(10, speed);
+
+  if (activeAnnouncements.length === 0 || !isVisiblePage) return null;
 
   return (
     <div className="fixed bottom-0 left-0 w-full z-[60] backdrop-blur-md bg-black/40 border-t border-white/10 pointer-events-none">
       <div className="overflow-hidden whitespace-nowrap py-3 flex items-center">
         <div 
           className="flex animate-breaking-news hover:[animation-play-state:paused] pointer-events-auto cursor-default"
-          style={{ animationDuration: `${speed}s` }}
+          style={{ animationDuration: `${Math.max(10, totalDuration)}s` }}
         >
           {/* Duplicate for seamless loop */}
           {[...Array(4)].map((_, i) => (
             <div key={i} className="flex items-center">
-              {announcements.map((announcement) => (
+              {activeAnnouncements.map((announcement) => (
                 <span key={`${i}-${announcement.id}`} className="mx-12 text-white text-[10px] uppercase tracking-[0.2em] font-bold flex items-center gap-3">
                   <span className="text-gold font-black">{t('breaking_news')}</span>
                   <span className="w-1.5 h-1.5 bg-gold rounded-full shadow-[0_0_8px_rgba(212,175,55,0.8)]" />

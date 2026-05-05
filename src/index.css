@@ -10,7 +10,7 @@
   --color-gold-light: #F4E4A1;
   --color-black-rich: #0F0F0F;
 
-  --animate-marquee: marquee 80s linear infinite;
+  --animate-marquee: marquee 160s linear infinite;
   
   @keyframes marquee {
     0% { transform: translateX(0); }

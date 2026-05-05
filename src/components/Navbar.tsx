@@ -44,7 +44,7 @@ export default function Navbar() {
     <nav 
       className={cn(
         "fixed w-full z-50 transition-all duration-500",
-        isScrolled || isOpen ? "bg-white shadow-md py-4" : "bg-transparent py-6"
+        isScrolled || isOpen ? "bg-white/95 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.08)] py-4" : "bg-transparent py-6"
       )}
     >
       <div className="container-custom">
@@ -52,8 +52,8 @@ export default function Navbar() {
           {/* Mobile Menu Toggle */}
           <button 
             className={cn(
-              "lg:hidden p-2",
-              isScrolled || isOpen ? "text-black-rich" : "text-white"
+              "lg:hidden p-2 transition-colors duration-300",
+              isScrolled || isOpen ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
             )}
             onClick={() => setIsOpen(!isOpen)}
           >
@@ -61,9 +61,9 @@ export default function Navbar() {
           </button>
 
           {/* Logo */}
-          <Link to="/" className="flex flex-col items-center">
+          <Link to="/" className="flex flex-col items-center group">
             <span className={cn(
-              "font-serif text-3xl md:text-4xl font-bold tracking-tighter transition-colors duration-500",
+              "font-serif text-3xl md:text-4xl font-bold tracking-tighter transition-colors duration-500 group-hover:text-gold",
               isScrolled || isOpen ? "text-burgundy" : "text-white"
             )}>
               Women <span className="font-light italic">Impact</span>
@@ -78,17 +78,26 @@ export default function Navbar() {
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center space-x-8">
-            {navLinks.map((link) => (
+            {navLinks.map((link) => {
+              const isActive = location.pathname === link.path;
+              return (
               <div key={link.path} className="relative group">
                 <Link
                   to={link.path}
                   className={cn(
-                    "text-xs uppercase tracking-widest font-medium hover:text-gold transition-colors flex items-center gap-1",
-                    isScrolled ? "text-black-rich" : "text-white",
-                    location.pathname === link.path && "text-gold"
+                    "text-xs uppercase tracking-widest font-medium transition-colors flex items-center gap-1 pb-1 relative",
+                    isScrolled ? "text-black-rich hover:text-burgundy" : "text-white hover:text-gold",
+                    isActive && (isScrolled ? "text-burgundy" : "text-gold")
                   )}
                 >
                   {link.name}
+                  <span 
+                    className={cn(
+                      "absolute bottom-0 left-0 w-full h-[1px] transform origin-left transition-transform duration-300",
+                      isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
+                      isScrolled ? "bg-burgundy" : "bg-gold"
+                    )} 
+                  />
                 </Link>
                 {link.name === 'Articles' && (
                   <div className="absolute top-full left-0 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
@@ -97,8 +106,9 @@ export default function Navbar() {
                         <Link 
                           key={cat}
                           to={`/articles?category=${encodeURIComponent(cat)}`}
-                          className="text-[10px] uppercase tracking-widest text-gray-500 hover:text-gold transition-colors"
+                          className="text-[10px] uppercase tracking-widest text-black-rich hover:text-burgundy transition-colors flex items-center gap-2 group/cat"
                         >
+                          <span className="w-1.5 h-1.5 rounded-full bg-gold/30 group-hover/cat:bg-gold transition-colors" />
                           {cat}
                         </Link>
                       ))}
@@ -106,40 +116,49 @@ export default function Navbar() {
                   </div>
                 )}
               </div>
-            ))}
+            )})}
             <LanguageSwitcher 
               className={cn(
                 "transition-colors",
-                isScrolled ? "border-gray-200" : "border-white/20 text-white"
+                isScrolled ? "border-gray-200 text-black-rich hover:text-burgundy" : "border-white/20 text-white hover:text-gold"
               )} 
             />
             <Link 
               to="/subscribe" 
-              className="bg-burgundy text-white px-6 py-2 text-xs uppercase tracking-widest hover:bg-black-rich transition-all"
+              className="bg-burgundy text-white px-6 py-2 text-xs uppercase tracking-widest hover:bg-gold transition-colors duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
             >
               {t('subscribe')}
             </Link>
             <Link 
               to="/dashboard" 
               className={cn(
-                "p-2 hover:text-gold transition-colors relative",
-                isScrolled ? "text-black-rich" : "text-white"
+                "p-2 transition-colors relative duration-300",
+                isScrolled ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
               )}
             >
               <User className="w-5 h-5" />
               {profile?.role === 'admin' && (
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-gold rounded-full" />
+                <span className="absolute 1 top-0 right-0 w-2.5 h-2.5 bg-gold border-2 border-white rounded-full" />
               )}
             </Link>
           </div>
 
           {/* Mobile Search/User Icons */}
           <div className="lg:hidden flex items-center space-x-4">
-            <LanguageSwitcher className="border-none p-0" />
+            <LanguageSwitcher className={cn(
+              "border-none p-0",
+              isScrolled || isOpen ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
+            )} />
             <Link to="/dashboard" className={cn(
-              isScrolled || isOpen ? "text-black-rich" : "text-white"
+              "transition-colors",
+              isScrolled || isOpen ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
             )}>
-              <User className="w-5 h-5" />
+              <div className="relative">
+                <User className="w-5 h-5" />
+                {profile?.role === 'admin' && (
+                  <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-gold border-2 border-white rounded-full" />
+                )}
+              </div>
             </Link>
           </div>
         </div>
@@ -149,27 +168,39 @@ export default function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="lg:hidden absolute top-full left-0 w-full bg-white border-t border-gray-100 shadow-xl overflow-y-auto max-h-[calc(100dvh-80px)]"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="lg:hidden absolute top-full left-0 w-full bg-white/95 backdrop-blur-md border-t border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.1)] overflow-hidden"
           >
             <div className="flex flex-col p-6 space-y-6">
-              {navLinks.map((link) => (
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.path;
+                return (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center space-x-4 text-lg font-serif text-black-rich hover:text-gold transition-colors"
+                  className={cn(
+                    "flex items-center space-x-4 text-lg font-serif transition-colors group",
+                    isActive ? "text-burgundy" : "text-black-rich hover:text-burgundy"
+                  )}
                 >
-                  <span className="text-gold">{link.icon}</span>
-                  <span>{link.name}</span>
+                  <span className={cn(
+                    "transition-colors",
+                    isActive ? "text-burgundy" : "text-gold group-hover:text-burgundy"
+                  )}>{link.icon}</span>
+                  <span className="relative">
+                    {link.name}
+                    {isActive && <span className="absolute -bottom-1 left-0 w-1/2 h-[2px] bg-gold" />}
+                  </span>
                 </Link>
-              ))}
+              )})}
               <Link
                 to="/subscribe"
                 onClick={() => setIsOpen(false)}
-                className="w-full bg-burgundy text-white py-4 text-center uppercase tracking-widest text-sm font-bold"
+                className="w-full bg-burgundy text-white py-4 text-center uppercase tracking-widest text-sm font-bold shadow-md active:bg-gold transition-colors"
               >
                 {t('subscribe_now')}
               </Link>
