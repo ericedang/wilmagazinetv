@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
-import { Crown, Lock, Loader2 } from 'lucide-react';
+import { Crown, Lock, Loader2, Search, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useFirestoreCollection } from '../hooks/useFirestoreCollection';
 import { Article } from '../types';
@@ -16,6 +16,7 @@ export default function Articles() {
   const isPremium = profile?.subscriptionStatus === 'premium';
   const { data: articles, loading } = useFirestoreCollection<Article>('articles');
   const [activeCategory, setActiveCategory] = React.useState('Tous');
+  const [searchQuery, setSearchQuery] = React.useState('');
 
   const categories = [
     'Tous', 'Leadership', 'Mindset & Succès', 'Foi & Leadership', 
@@ -23,9 +24,20 @@ export default function Articles() {
     'Business', 'Technologie', 'Inspiration'
   ];
 
-  const filteredArticles = activeCategory === 'Tous' 
-    ? articles.filter(a => !a.isHidden)
-    : articles.filter(a => a.category === activeCategory && !a.isHidden);
+  const filteredArticles = articles.filter(a => {
+    if (a.isHidden) return false;
+    if (activeCategory !== 'Tous' && a.category !== activeCategory) return false;
+    
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const title = getLocalized(a, 'title')?.toLowerCase() || '';
+      const excerpt = getLocalized(a, 'excerpt')?.toLowerCase() || '';
+      const content = a.content ? a.content.toLowerCase() : '';
+      return title.includes(query) || excerpt.includes(query) || content.includes(query);
+    }
+    
+    return true;
+  });
 
   if (loading) {
     return (
@@ -43,17 +55,39 @@ export default function Articles() {
           <h1 className="text-5xl md:text-6xl font-serif mb-4">{t('articles')}</h1>
           <p className="text-gray-500 uppercase tracking-widest text-[10px]">{t('articles_subtitle')}</p>
         </div>
-        <div className="flex flex-wrap gap-6 text-[10px] uppercase tracking-widest font-bold border-b border-gray-100 pb-2">
-          {categories.map(cat => (
-            <button 
-              key={cat} 
-              onClick={() => setActiveCategory(cat)}
-              className={`hover:text-gold transition-colors relative group ${activeCategory === cat ? 'text-gold' : ''}`}
-            >
-              {cat === 'Tous' ? t('all') : cat}
-              <span className={`absolute -bottom-2 left-0 h-[1px] bg-gold transition-all ${activeCategory === cat ? 'w-full' : 'w-0 group-hover:w-full'}`} />
-            </button>
-          ))}
+        <div className="w-full md:w-auto flex flex-col md:items-end gap-6">
+          <div className="relative w-full md:w-80">
+            <input 
+              type="text"
+              placeholder={t('search_articles') || "Rechercher des articles..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full p-3 pr-10 border border-gray-200 focus:border-gold outline-none text-sm rounded-none bg-white"
+            />
+            {searchQuery ? (
+              <button 
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-burgundy transition-colors"
+                aria-label="Effacer la recherche"
+              >
+                <X size={16} />
+              </button>
+            ) : (
+                <Search size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+            )}
+          </div>
+          <div className="flex flex-wrap gap-6 text-[10px] uppercase tracking-widest font-bold border-b border-gray-100 pb-2">
+            {categories.map(cat => (
+              <button 
+                key={cat} 
+                onClick={() => setActiveCategory(cat)}
+                className={`hover:text-gold transition-colors relative group ${activeCategory === cat ? 'text-gold' : ''}`}
+              >
+                {cat === 'Tous' ? t('all') : cat}
+                <span className={`absolute -bottom-2 left-0 h-[1px] bg-gold transition-all ${activeCategory === cat ? 'w-full' : 'w-0 group-hover:w-full'}`} />
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -120,6 +154,18 @@ export default function Articles() {
           </motion.div>
         ))}
       </div>
+
+      {filteredArticles.length === 0 && (
+        <div className="text-center py-20 text-gray-500">
+          <p className="text-lg mb-2">Aucun article ne correspond à votre recherche.</p>
+          <button 
+            onClick={() => { setSearchQuery(''); setActiveCategory('Tous'); }}
+            className="text-gold hover:text-burgundy transition-colors text-sm font-bold uppercase tracking-widest"
+          >
+            Réinitialiser les filtres
+          </button>
+        </div>
+      )}
     </div>
   );
 }
