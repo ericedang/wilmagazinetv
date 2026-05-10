@@ -34,17 +34,17 @@ export default function LanguageSwitcher({ className }: { className?: string }) 
   };
 
   return (
-    <div className={cn("relative", className)} ref={dropdownRef}>
+    <div className={cn("relative z-50", className)} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-gray-200 hover:border-gold transition-all group"
+        className="flex items-center gap-2 px-3 py-1.5 rounded-full border border-current hover:border-gold transition-all group"
         title="Change language"
       >
-        <Globe className="w-4 h-4 text-gray-400 group-hover:text-gold transition-colors" />
-        <span className="text-[10px] font-bold uppercase tracking-widest text-gray-600 group-hover:text-gold transition-colors">
+        <Globe className="w-4 h-4 group-hover:text-gold transition-colors" />
+        <span className="text-[10px] font-bold uppercase tracking-widest group-hover:text-gold transition-colors">
           {displayLang}
         </span>
-        <ChevronDown className={cn("w-3 h-3 text-gray-400 group-hover:text-gold transition-all duration-300", isOpen && "rotate-180")} />
+        <ChevronDown className={cn("w-3 h-3 group-hover:text-gold transition-all duration-300", isOpen && "rotate-180")} />
       </button>
 
       <AnimatePresence>

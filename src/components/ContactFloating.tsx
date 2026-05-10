@@ -43,7 +43,7 @@ const ContactFloating = () => {
   ];
 
   return (
-    <div className="fixed bottom-20 right-4 md:right-8 z-50">
+    <div className="fixed bottom-8 right-4 md:right-8 z-50">
       <AnimatePresence>
         {open && (
           <motion.div
@@ -78,7 +78,7 @@ const ContactFloating = () => {
         onClick={() => setOpen(!open)}
         className={`${
           open ? 'bg-white/20 backdrop-blur-xl text-white border border-white/30' : 'bg-gold/90 backdrop-blur-md text-black-rich border border-white/20'
-        } p-5 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.2)] hover:scale-110 hover:shadow-gold/50 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] transition-all duration-500 flex items-center justify-center relative group overflow-hidden`}
+        } w-16 h-16 rounded-full shadow-[0_0_30px_rgba(0,0,0,0.2)] hover:scale-110 hover:shadow-gold/50 hover:shadow-[0_0_25px_rgba(212,175,55,0.5)] transition-all duration-500 flex items-center justify-center relative group overflow-hidden`}
       >
         <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
         {open ? <X size={28} /> : <MessageCircle size={28} />}

@@ -13,6 +13,8 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
+  const isHomePage = location.pathname === '/';
+  const forceScrolledStyle = !isHomePage || isScrolled || isOpen;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,7 +46,7 @@ export default function Navbar() {
     <nav 
       className={cn(
         "fixed w-full z-50 transition-all duration-500",
-        isScrolled || isOpen ? "bg-white/95 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.08)] py-4" : "bg-transparent py-6"
+        forceScrolledStyle ? "bg-white/95 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.08)] py-4" : "bg-transparent py-6"
       )}
     >
       <div className="container-custom">
@@ -53,7 +55,7 @@ export default function Navbar() {
           <button 
             className={cn(
               "lg:hidden p-2 transition-colors duration-300",
-              isScrolled || isOpen ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
+              forceScrolledStyle ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
             )}
             onClick={() => setIsOpen(!isOpen)}
           >
@@ -64,13 +66,13 @@ export default function Navbar() {
           <Link to="/" className="flex flex-col items-center group">
             <span className={cn(
               "font-serif text-3xl md:text-4xl font-bold tracking-tighter transition-colors duration-500 group-hover:text-gold",
-              isScrolled || isOpen ? "text-burgundy" : "text-white"
+              forceScrolledStyle ? "text-burgundy" : "text-white"
             )}>
               Women <span className="font-light italic">Impact</span>
             </span>
             <span className={cn(
               "text-[8px] md:text-[9px] tracking-[0.4em] uppercase transition-colors duration-500 text-center",
-              isScrolled || isOpen ? "text-gold" : "text-gold-light"
+              forceScrolledStyle ? "text-gold" : "text-gold-light"
             )}>
               Excellence & Leadership
             </span>
@@ -86,8 +88,8 @@ export default function Navbar() {
                   to={link.path}
                   className={cn(
                     "text-xs uppercase tracking-widest font-medium transition-colors flex items-center gap-1 pb-1 relative",
-                    isScrolled ? "text-black-rich hover:text-burgundy" : "text-white hover:text-gold",
-                    isActive && (isScrolled ? "text-burgundy" : "text-gold")
+                    forceScrolledStyle ? "text-black-rich hover:text-burgundy" : "text-white hover:text-gold",
+                    isActive && (forceScrolledStyle ? "text-burgundy" : "text-gold")
                   )}
                 >
                   {link.name}
@@ -95,7 +97,7 @@ export default function Navbar() {
                     className={cn(
                       "absolute bottom-0 left-0 w-full h-[1px] transform origin-left transition-transform duration-300",
                       isActive ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100",
-                      isScrolled ? "bg-burgundy" : "bg-gold"
+                      forceScrolledStyle ? "bg-burgundy" : "bg-gold"
                     )} 
                   />
                 </Link>
@@ -120,7 +122,7 @@ export default function Navbar() {
             <LanguageSwitcher 
               className={cn(
                 "transition-colors",
-                isScrolled ? "border-gray-200 text-black-rich hover:text-burgundy" : "border-white/20 text-white hover:text-gold"
+                forceScrolledStyle ? "text-gray-600 hover:text-burgundy border-gray-200" : "text-white/80 hover:text-gold border-white/20"
               )} 
             />
             <Link 
@@ -133,7 +135,7 @@ export default function Navbar() {
               to="/dashboard" 
               className={cn(
                 "p-2 transition-colors relative duration-300",
-                isScrolled ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
+                forceScrolledStyle ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
               )}
             >
               <User className="w-5 h-5" />
@@ -147,11 +149,11 @@ export default function Navbar() {
           <div className="lg:hidden flex items-center space-x-4">
             <LanguageSwitcher className={cn(
               "border-none p-0",
-              isScrolled || isOpen ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
+              forceScrolledStyle ? "text-gray-600 hover:text-burgundy" : "text-white/80 hover:text-gold"
             )} />
             <Link to="/dashboard" className={cn(
               "transition-colors",
-              isScrolled || isOpen ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
+              forceScrolledStyle ? "text-burgundy hover:text-gold" : "text-white hover:text-gold"
             )}>
               <div className="relative">
                 <User className="w-5 h-5" />

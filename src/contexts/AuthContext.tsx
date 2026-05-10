@@ -10,6 +10,8 @@ interface UserProfile {
   subscriptionStatus: 'free' | 'premium';
   favorites: string[];
   readingHistory: string[];
+  purchasedMagazines?: string[];
+  purchasedArticles?: string[];
 }
 
 interface AuthContextType {

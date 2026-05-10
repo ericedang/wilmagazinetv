@@ -137,6 +137,8 @@ export default function Magazine() {
           <MagazineViewer 
             pdfUrl={selectedMagazine.pdfUrl} 
             title={getLocalized(selectedMagazine, 'title')} 
+            magazineId={selectedMagazine.id}
+            price={selectedMagazine.price || '2000'}
             onClose={() => setSelectedMagazine(null)} 
           />
         )}

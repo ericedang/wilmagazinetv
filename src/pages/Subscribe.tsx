@@ -6,7 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'motion/react';
 import { useFlutterwave, closePaymentModal } from 'flutterwave-react-v3';
-import { db, doc, updateDoc, serverTimestamp } from '../firebase';
+import { db, doc, updateDoc, serverTimestamp, collection, addDoc } from '../firebase';
 import BackButton from '../components/BackButton';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '');
@@ -20,6 +20,10 @@ export default function Subscribe() {
   const [status, setStatus] = useState<{ text: string, type: 'success' | 'error' } | null>(null);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  
+  // Custom states for MMGate
+  const [mmgateStep, setMmgateStep] = useState<'idle' | 'confirm_duplicate' | 'polling'>('idle');
+  const [pollingId, setPollingId] = useState<string | null>(null);
 
   // Flutterwave Configuration
   const config = useMemo(() => ({
@@ -28,17 +32,14 @@ export default function Subscribe() {
     amount: selectedPlan ? parseFloat(selectedPlan.priceFCFA.replace(/\s/g, '')) : 0,
     currency: 'XAF',
     payment_options: paymentMethod === 'card' ? 'card' : 
-                    paymentMethod?.startsWith('momo') ? 'mobilemoneyfranco' : 
-                    paymentMethod === 'bank_transfer' ? 'banktransfer' : 'card,mobilemoneyfranco,banktransfer',
+                    paymentMethod === 'bank_transfer' ? 'banktransfer' : 'card,banktransfer', // Exclude Momo from FLW as it's handled by MMGate
     customer: {
       email: user?.email || '',
       phone_number: phoneNumber || '',
       name: profile?.displayName || user?.displayName || 'Client',
     },
     customizations: {
-      title: paymentMethod === 'momo_orange' ? t('orange_money_payment') :
-             paymentMethod === 'momo_mtn' ? t('mtn_momo_payment') :
-             paymentMethod === 'card' ? t('card_payment') :
+      title: paymentMethod === 'card' ? t('card_payment') :
              paymentMethod === 'bank_transfer' ? t('bank_transfer_payment') : t('subscription_title'),
       description: `${t('subscription')} ${selectedPlan?.name} - ${selectedPlan?.priceFCFA} FCFA`,
       logo: 'https://picsum.photos/seed/womenimpact/200/200',
@@ -46,6 +47,74 @@ export default function Subscribe() {
   }), [selectedPlan, paymentMethod, user, profile, phoneNumber]);
 
   const handleFlutterwavePayment = useFlutterwave(config);
+
+  const startPolling = async (idoper: string) => {
+    setMmgateStep('polling');
+    setPollingId(idoper);
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const res = await fetch(`/api/mmgate/status/${idoper}`);
+        const data = await res.json();
+        
+        console.log("Polling MMGate Status:", data);
+
+        if (data.ETATO === 200 || data.ETATO === '200') {
+          // Success
+          clearInterval(pollInterval);
+          if (user) {
+            await updateDoc(doc(db, 'users', user.uid), {
+                subscriptionStatus: 'premium',
+                subscriptionId: idoper,
+                updatedAt: serverTimestamp()
+            });
+          }
+          setStatus({ text: t('payment_success_verified') || "Paiement validé avec succès !", type: 'success' });
+          setLoading(null);
+          setMmgateStep('idle');
+          setPollingId(null);
+          setTimeout(() => navigate('/dashboard'), 3000);
+        } else if (data.ETATO !== 300 && data.ETATO !== '300') {
+          // Failed or Not Found
+          clearInterval(pollInterval);
+          setStatus({ text: data.ETATO === 404 ? "Paiement refusé." : data.ETATO === 403 ? "Paiement annulé." : "Le paiement a échoué.", type: 'error' });
+          setLoading(null);
+          setMmgateStep('idle');
+          setPollingId(null);
+        }
+        // If 401 or 402, it continues polling
+      } catch (err) {
+        console.error("Polling error:", err);
+      }
+    }, 5000);
+  };
+
+  const handleMMGateDuplicateConfirm = async () => {
+    setLoading(t('processing') || 'Traitement...');
+    try {
+      const response = await fetch('/api/mmgate/payment/confirm-duplicate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            phoneNumber,
+            amount: parseFloat(selectedPlan.priceFCFA.replace(/\s/g, '')),
+            reference: `sub_dup_${user?.uid}_${Date.now()}`
+          }),
+      });
+      const data = await response.json();
+      
+      if (data.ETAT === 200 && data.IDOPER) {
+         setStatus({ text: "Demande de paiement envoyée. Veuillez valider sur votre téléphone (Code secret).", type: 'success' });
+         startPolling(data.IDOPER);
+      } else {
+         throw new Error(data.message || `Erreur MMGate (ETAT: ${data.ETAT})`);
+      }
+    } catch (err: any) {
+       setStatus({ text: err.message || t('common.error_occurred'), type: 'error' });
+       setLoading(null);
+       setMmgateStep('idle');
+    }
+  };
 
   const handleSubscribe = async () => {
     if (!user) {
@@ -55,8 +124,81 @@ export default function Subscribe() {
 
     if (!selectedPlan || !paymentMethod) return;
 
-    // Global & African Payment Methods (Flutterwave)
-    if (paymentMethod === 'card' || paymentMethod.startsWith('momo') || paymentMethod === 'bank_transfer') {
+    // Direct MMGate Handling for Mobile Money
+    if (paymentMethod.startsWith('momo')) {
+        const cleanPhone = phoneNumber.replace(/\s+/g, '');
+        if (!/^((237)?6[0-9]{8})$/.test(cleanPhone)) {
+          setStatus({ text: "Numéro invalide. Format attendu : 6XXXXXXXX ou 2376XXXXXXXX", type: 'error' });
+          return;
+        }
+
+        setLoading(t('processing') || 'Traitement...');
+        setMmgateStep('idle');
+        setStatus(null);
+        
+        try {
+            const response = await fetch('/api/mmgate/payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  phoneNumber,
+                  amount: parseFloat(selectedPlan.priceFCFA.replace(/\s/g, '')),
+                  reference: `sub_${user.uid}_${Date.now()}`
+                }),
+            });
+
+            if (!response.ok) {
+              const d = await response.json();
+              throw new Error(d.error || 'Erreur serveur');
+            }
+
+            const data = await response.json();
+            console.log("MMGate Init:", data);
+
+            if (data.ETAT === 200 && data.IDOPER) {
+               // Success init
+               setStatus({ text: "Demande de paiement envoyée. Veuillez valider sur votre téléphone (Code secret).", type: 'success' });
+               startPolling(data.IDOPER);
+            } else if (data.ETAT === 600) {
+               // Doublon probable
+               setMmgateStep('confirm_duplicate');
+               setLoading(null);
+            } else {
+               throw new Error(data.message || `Erreur lors de l'initiation (ETAT: ${data.ETAT})`);
+            }
+        } catch (err: any) {
+            console.error("MMGate Error:", err);
+            setStatus({ text: err.message || t('common.error_occurred'), type: 'error' });
+            setLoading(null);
+        }
+        return;
+    }
+
+    // Manual Bank Transfer
+    if (paymentMethod === 'bank_transfer') {
+      setLoading(t('common.processing') || 'Traitement...');
+      try {
+        await addDoc(collection(db, 'messages'), {
+          name: profile?.displayName || user?.displayName || 'Abonné Sans Nom',
+          email: user?.email || 'N/A',
+          phone: phoneNumber || 'Non renseigné',
+          subject: 'PREUVE DE VIREMENT - Abonnement',
+          message: `L'utilisateur indique avoir effectué un virement de ${selectedPlan.priceFCFA} FCFA pour l'abonnement ${selectedPlan.name}.\n\nVeuillez vérifier le compte bancaire Afriland First Bank (Nemgne Nokam josseline, 10005-00001-05116631101-28) et activer manuellement l'abonnement en changeant le rôle de l'utilisateur à "Premium" dans le tableau de bord d'administration.`,
+          status: 'new',
+          createdAt: serverTimestamp()
+        });
+        setStatus({ text: "Demande envoyée. Votre abonnement sera activé par un administrateur dès réception de votre virement.", type: 'success' });
+        setTimeout(() => navigate('/dashboard'), 5000);
+      } catch (err: any) {
+        console.error(err);
+        setStatus({ text: "Erreur lors de l'envoi de la demande.", type: 'error' });
+        setLoading(null);
+      }
+      return;
+    }
+
+    // Global Payment Methods (Flutterwave)
+    if (paymentMethod === 'card') {
       setLoading(selectedPlan.name);
       
       try {
@@ -267,8 +409,12 @@ export default function Subscribe() {
                   paymentMethod === 'card' ? 'border-burgundy bg-burgundy/5 ring-1 ring-burgundy' : 'border-gray-100 hover:border-gray-200 bg-white'
                 }`}
               >
-                <div className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-sm ${paymentMethod === 'card' ? 'bg-burgundy text-white' : 'bg-gray-50 text-gray-400'}`}>
-                  <CreditCard size={32} />
+                <div className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-sm overflow-hidden bg-white`}>
+                  <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100" rx="20" fill="#f8f9fa"/>
+                    <circle cx="35" cy="50" r="20" fill="#eb001b" fillOpacity="0.9"/>
+                    <circle cx="65" cy="50" r="20" fill="#f79e1b" fillOpacity="0.9"/>
+                  </svg>
                 </div>
                 <div>
                   <div className="text-xs font-bold uppercase tracking-widest mb-1">{t('bank_card')}</div>
@@ -282,8 +428,12 @@ export default function Subscribe() {
                   paymentMethod === 'momo_orange' ? 'border-[#FF6600] bg-[#FF6600]/5 ring-1 ring-[#FF6600]' : 'border-gray-100 hover:border-gray-200 bg-white'
                 }`}
               >
-                <div className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-sm ${paymentMethod === 'momo_orange' ? 'bg-[#FF6600] text-white' : 'bg-gray-50 text-gray-400'}`}>
-                  <Smartphone size={32} />
+                <div className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-sm overflow-hidden bg-white`}>
+                  <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100" rx="20" fill="#FF6600"/>
+                    <rect x="25" y="25" width="50" height="50" fill="#FF6600" stroke="white" strokeWidth="4"/>
+                    <text x="50" y="55" fill="white" fontSize="16" fontFamily="Arial, sans-serif" fontWeight="bold" textAnchor="middle">orange</text>
+                  </svg>
                 </div>
                 <div>
                   <div className="text-xs font-bold uppercase tracking-widest mb-1">Orange Money</div>
@@ -297,8 +447,12 @@ export default function Subscribe() {
                   paymentMethod === 'momo_mtn' ? 'border-[#FFCC00] bg-[#FFCC00]/5 ring-1 ring-[#FFCC00]' : 'border-gray-100 hover:border-gray-200 bg-white'
                 }`}
               >
-                <div className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-sm ${paymentMethod === 'momo_mtn' ? 'bg-[#FFCC00] text-black' : 'bg-gray-50 text-gray-400'}`}>
-                  <Smartphone size={32} />
+                <div className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-sm overflow-hidden bg-white`}>
+                  <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100" rx="20" fill="#FFCC00"/>
+                    <ellipse cx="50" cy="50" rx="35" ry="25" fill="#FFCC00" stroke="black" strokeWidth="4"/>
+                    <text x="50" y="55" fill="black" fontSize="24" fontFamily="Arial, sans-serif" fontWeight="bold" textAnchor="middle">MTN</text>
+                  </svg>
                 </div>
                 <div>
                   <div className="text-xs font-bold uppercase tracking-widest mb-1">MTN MoMo</div>
@@ -312,8 +466,15 @@ export default function Subscribe() {
                   paymentMethod === 'bank_transfer' ? 'border-gold bg-gold/5 ring-1 ring-gold' : 'border-gray-100 hover:border-gray-200 bg-white'
                 }`}
               >
-                <div className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-sm ${paymentMethod === 'bank_transfer' ? 'bg-gold text-black' : 'bg-gray-50 text-gray-400'}`}>
-                  <Building2 size={32} />
+                <div className={`w-16 h-16 rounded-xl flex items-center justify-center shadow-sm overflow-hidden bg-white`}>
+                  <svg width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100" height="100" rx="20" fill="#f8f9fa"/>
+                    <path d="M50 20 L20 40 H80 Z" fill="#d4af37"/>
+                    <rect x="30" y="45" width="8" height="30" fill="#d4af37"/>
+                    <rect x="46" y="45" width="8" height="30" fill="#d4af37"/>
+                    <rect x="62" y="45" width="8" height="30" fill="#d4af37"/>
+                    <rect x="20" y="75" width="60" height="5" fill="#d4af37"/>
+                  </svg>
                 </div>
                 <div>
                   <div className="text-xs font-bold uppercase tracking-widest mb-1">{t('bank_transfer')}</div>
@@ -366,7 +527,7 @@ export default function Subscribe() {
                     </label>
                     <input 
                       type="tel"
-                      placeholder="Ex: +237 697061084"
+                      placeholder="Ex: 6XXXXXXXX"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
                       className="w-full bg-white border border-gray-100 px-6 py-4 rounded-lg focus:outline-none focus:border-gold transition-colors font-mono text-sm"
@@ -398,42 +559,74 @@ export default function Subscribe() {
                   <div className="grid grid-cols-1 gap-4 text-[10px]">
                     <div className="p-4 bg-white border border-gray-100 rounded-lg">
                       <span className="text-gray-400 uppercase tracking-widest block mb-1">{t('bank')}</span>
-                      <span className="font-bold">UBA Cameroon</span>
+                      <span className="font-bold">Afriland First Bank</span>
                     </div>
                     <div className="p-4 bg-white border border-gray-100 rounded-lg">
                       <span className="text-gray-400 uppercase tracking-widest block mb-1">{t('account_name')}</span>
-                      <span className="font-bold">WOMEN IMPACT MEDIA</span>
+                      <span className="font-bold uppercase">Nemgne Nokam josseline</span>
                     </div>
                     <div className="p-4 bg-white border border-gray-100 rounded-lg">
-                      <span className="text-gray-400 uppercase tracking-widest block mb-1">IBAN / RIB</span>
-                      <span className="font-mono font-bold">CM21 10033 05211 01234567890 12</span>
+                      <span className="text-gray-400 uppercase tracking-widest block mb-1">Numéro de compte</span>
+                      <span className="font-mono font-bold text-sm tracking-widest text-[#d4af37]">10005 - 00001 - 05116631101 - 28</span>
                     </div>
                   </div>
 
-                  <div className="p-4 bg-burgundy/5 border border-burgundy/10 rounded-lg text-burgundy text-[9px] font-bold uppercase tracking-widest text-center">
-                    {t('reference_to_indicate')} : {user?.uid.slice(0, 8).toUpperCase()}
+                  <div className="p-4 bg-burgundy/5 border border-burgundy/10 rounded-lg text-burgundy text-center">
+                    <div className="text-[12px] font-bold uppercase tracking-widest mb-1">{t('reference_to_indicate')} : {user?.uid.slice(0, 8).toUpperCase()}</div>
+                    <div className="text-[10px] opacity-80 normal-case tracking-normal">Veuillez indiquer ce code dans le motif de votre virement pour nous permettre d'identifier votre paiement.</div>
                   </div>
                 </div>
               </motion.div>
             )}
 
-            <button 
-              onClick={handleSubscribe}
-              disabled={!paymentMethod || loading !== null || ((paymentMethod.startsWith('momo')) && !phoneNumber)}
-              className="btn-premium w-full py-5 disabled:opacity-50 flex items-center justify-center gap-3"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="animate-spin" size={20} />
-                  {t('common.processing') || 'Traitement...'}
-                </>
-              ) : (
-                <>
-                  {paymentMethod === 'card' ? t('proceed_to_card_payment') : 
-                   paymentMethod === 'bank_transfer' ? t('confirm_transfer') : t('pay_now')}
-                </>
-              )}
-            </button>
+            {mmgateStep === 'confirm_duplicate' ? (
+              <div className="space-y-4">
+                <div className="p-4 bg-yellow-50 text-yellow-800 rounded-lg text-sm mb-4 border border-yellow-200 flex gap-3">
+                  <AlertCircle className="flex-none mt-0.5" size={20} />
+                  Une transaction similaire a été détectée très récemment (Doublon probable). Voulez-vous tout de même procéder à ce nouveau paiement ?
+                </div>
+                <div className="flex gap-4">
+                  <button 
+                    onClick={() => setMmgateStep('idle')}
+                    className="flex-1 py-4 bg-gray-100 text-gray-700 uppercase tracking-widest text-xs font-bold hover:bg-gray-200 transition-colors"
+                  >
+                    Annuler
+                  </button>
+                  <button 
+                    onClick={handleMMGateDuplicateConfirm}
+                    className="flex-1 py-4 bg-gold text-black uppercase tracking-widest text-xs font-bold hover:bg-yellow-500 transition-colors"
+                  >
+                    Oui, Payer
+                  </button>
+                </div>
+              </div>
+            ) : mmgateStep === 'polling' ? (
+              <div className="p-8 text-center bg-gray-50 rounded-xl border border-gray-100">
+                <Loader2 className="animate-spin text-gold mx-auto mb-4" size={40} />
+                <h3 className="font-serif text-xl mb-2">Paiement en attente...</h3>
+                <p className="text-sm text-gray-500">
+                  Veuillez vérifier votre téléphone et saisir votre code PIN pour valider la transaction. Ne fermez pas cette page.
+                </p>
+              </div>
+            ) : (
+              <button 
+                onClick={handleSubscribe}
+                disabled={!paymentMethod || loading !== null || ((paymentMethod.startsWith('momo')) && !phoneNumber)}
+                className="btn-premium w-full py-5 disabled:opacity-50 flex items-center justify-center gap-3"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="animate-spin" size={20} />
+                    {t('common.processing') || 'Traitement...'}
+                  </>
+                ) : (
+                  <>
+                    {paymentMethod === 'card' ? t('proceed_to_card_payment') : 
+                     paymentMethod === 'bank_transfer' ? t('confirm_transfer') : t('pay_now')}
+                  </>
+                )}
+              </button>
+            )}
           </div>
         </div>
       )}

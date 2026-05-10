@@ -32,6 +32,145 @@ async function startServer() {
     res.json({ geminiApiKey: process.env.GEMINI_API_KEY });
   });
 
+  // --- MMGate Mobile Money Gateway Integration ---
+
+  // 1. Initialiser un paiement: PAIEMENTP
+  app.post("/api/mmgate/payment", async (req, res) => {
+    const { phoneNumber, amount, reference } = req.body;
+    
+    const mmgateUrl = process.env.MMGATE_URL;
+    const cdprt = process.env.MMGATE_PARTNER_CODE;
+    const usr = process.env.MMGATE_USER;
+    const pwd = process.env.MMGATE_PASSWORD;
+    const token = process.env.MMGATE_PARTNER_TOKEN;
+
+    if (!mmgateUrl || !token || !cdprt || !usr || !pwd) {
+      console.error("MMGate Configuration missing.");
+      return res.status(500).json({ error: "Passerelle de paiement non configurée." });
+    }
+
+    try {
+      // Nettoyer le numéro (format international sans + ou espace, ex 23769...)
+      const expo = phoneNumber?.replace(/[^0-9]/g, '');
+      if (!expo) {
+        return res.status(400).json({ error: "Numéro de téléphone invalide ou manquant." });
+      }
+
+      const monto = Math.round(Number(amount));
+      if (!monto || isNaN(monto) || monto <= 0) {
+         return res.status(400).json({ error: "Montant nul ou invalide." });
+      }
+
+      // Construction de l'URL (avec slash final géré)
+      const baseUrl = mmgateUrl.endsWith('/') ? mmgateUrl.slice(0, -1) : mmgateUrl;
+      const paymentUrl = `${baseUrl}/PAIEMENTP/${expo}/${monto}/${cdprt}/${usr}/${pwd}`;
+
+      console.log(`Initialisation paiement MMGate: ${paymentUrl}`);
+
+      const response = await fetch(paymentUrl, {
+        method: "GET",
+        headers: {
+          "token": token,
+          "Token": token,
+          "X-Partner-Token": token,
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      const responseText = await response.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error("Invalid JSON from MMGate:", responseText);
+        return res.status(502).json({ error: "Réponse invalide de l'opérateur (MMGate)", details: responseText });
+      }
+
+      console.log("MMGate PAIEMENTP Response:", data);
+      res.json(data);
+    } catch (error: any) {
+      console.error("MMGate Payment Error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // 1.b. Confirmer un doublon (X-MMGate-Confirm-Duplicate)
+  app.post("/api/mmgate/payment/confirm-duplicate", async (req, res) => {
+    const { phoneNumber, amount, reference } = req.body;
+    
+    const mmgateUrl = process.env.MMGATE_URL;
+    const cdprt = process.env.MMGATE_PARTNER_CODE;
+    const usr = process.env.MMGATE_USER;
+    const pwd = process.env.MMGATE_PASSWORD;
+    const token = process.env.MMGATE_PARTNER_TOKEN;
+
+    try {
+      const expo = phoneNumber?.replace(/[^0-9]/g, '');
+      const monto = Math.round(Number(amount));
+      
+      if (!expo || !monto || isNaN(monto) || monto <= 0) {
+        return res.status(400).json({ error: "Paramètres invalides pour la confirmation." });
+      }
+
+      const baseUrl = mmgateUrl?.endsWith('/') ? mmgateUrl.slice(0, -1) : mmgateUrl;
+      const paymentUrl = `${baseUrl}/PAIEMENTP/${expo}/${monto}/${cdprt}/${usr}/${pwd}`;
+
+      const response = await fetch(paymentUrl, {
+        method: "GET",
+        headers: {
+          "token": token || '',
+          "Token": token || '',
+          "X-Partner-Token": token || '',
+          "Authorization": `Bearer ${token}`,
+          "X-MMGate-Confirm-Duplicate": "1"
+        }
+      });
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // 2. Vérifier le statut: ETATO
+  app.get("/api/mmgate/status/:idoper", async (req, res) => {
+    const { idoper } = req.params;
+
+    const mmgateUrl = process.env.MMGATE_URL;
+    const cdprt = process.env.MMGATE_PARTNER_CODE;
+    const usr = process.env.MMGATE_USER;
+    const pwd = process.env.MMGATE_PASSWORD;
+    const token = process.env.MMGATE_PARTNER_TOKEN;
+
+    if (!mmgateUrl || !cdprt || !usr || !pwd) {
+      return res.status(500).json({ error: "Passerelle de paiement non configurée." });
+    }
+
+    try {
+      const baseUrl = mmgateUrl.endsWith('/') ? mmgateUrl.slice(0, -1) : mmgateUrl;
+      const statusUrl = `${baseUrl}/ETATO/${idoper}/${cdprt}/${usr}/${pwd}`;
+
+      const response = await fetch(statusUrl, {
+        method: "GET",
+        headers: {
+          "token": token || '',
+          "Token": token || '',
+          "X-Partner-Token": token || '',
+          "Authorization": `Bearer ${token}`
+        }
+      });
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error: any) {
+      console.error("MMGate Status Error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // --- Fin MMGate ---
+
   // Stripe Checkout Session Endpoint
   app.post("/api/create-checkout-session", async (req, res) => {
     if (!stripe) {

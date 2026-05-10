@@ -48,6 +48,7 @@ export interface Magazine {
   description: string;
   description_en?: string;
   description_es?: string;
+  price?: string;
 }
 
 export interface Event {

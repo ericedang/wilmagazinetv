@@ -15,7 +15,7 @@ export default function EditModeToggle({ isEditing, onToggle }: EditModeTogglePr
   if (profile?.role !== 'admin') return null;
 
   return (
-    <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
+    <div className="fixed bottom-8 left-4 md:left-8 z-50">
       <button 
         onClick={onToggle}
         className={`w-16 h-16 rounded-full shadow-2xl flex items-center justify-center transition-all duration-500 group ${
