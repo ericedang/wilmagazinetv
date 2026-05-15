@@ -109,7 +109,7 @@ export default function ReservationModal({ isOpen, onClose, events, selectedEven
         const res = await fetch(`/api/mmgate/status/${idoper}`);
         const data = await res.json();
 
-        const pendingStates = [300, '300', 401, '401', 402, '402'];
+        const pendingStates = [300, '300', 401, '401'];
         if (data.ETATO === 200 || data.ETATO === '200') {
           // Success
           clearInterval(pollInterval);
@@ -117,16 +117,23 @@ export default function ReservationModal({ isOpen, onClose, events, selectedEven
         } else if (!pendingStates.includes(data.ETATO)) {
           // Failed or Not Found
           clearInterval(pollInterval);
-          setError(data.ETATO === 404 ? "Paiement refusé." : data.ETATO === 403 ? "Paiement annulé." : "Le paiement a échoué.");
+
+          let errorMessage = "Le paiement a échoué.";
+          if (data.ETATO == 402) errorMessage = "Échec : Solde insuffisant. Veuillez recharger votre compte.";
+          else if (data.ETATO == 403) errorMessage = "Paiement annulé par l'utilisateur.";
+          else if (data.ETATO == 404) errorMessage = "Numéro non valide ou paiement introuvable.";
+          else if (data.ETATO == 500) errorMessage = "Erreur de l'opérateur mobile.";
+
+          setError(errorMessage);
           setLoading(null);
           setMmgateStep('idle');
           setPollingId(null);
         }
-        // 401, 402 -> continues
+        // 401, 300 -> continues
       } catch (err) {
         console.error("Polling error:", err);
       }
-    }, 5000);
+    }, 20000);
   };
 
   const handleMMGateDuplicateConfirm = async () => {

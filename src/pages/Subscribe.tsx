@@ -59,7 +59,7 @@ export default function Subscribe() {
         
         console.log("Polling MMGate Status:", data);
 
-        const pendingStates = [300, '300', 401, '401', 402, '402'];
+        const pendingStates = [300, '300', 401, '401'];
         if (data.ETATO === 200 || data.ETATO === '200') {
           // Success
           clearInterval(pollInterval);
@@ -78,16 +78,23 @@ export default function Subscribe() {
         } else if (!pendingStates.includes(data.ETATO)) {
           // Failed or Not Found
           clearInterval(pollInterval);
-          setStatus({ text: data.ETATO === 404 ? "Paiement refusé." : data.ETATO === 403 ? "Paiement annulé." : "Le paiement a échoué.", type: 'error' });
+          
+          let errorMessage = "Le paiement a échoué.";
+          if (data.ETATO == 402) errorMessage = "Échec : Solde insuffisant. Veuillez recharger votre compte.";
+          else if (data.ETATO == 403) errorMessage = "Paiement annulé par l'utilisateur.";
+          else if (data.ETATO == 404) errorMessage = "Numéro non valide ou paiement introuvable.";
+          else if (data.ETATO == 500) errorMessage = "Erreur de l'opérateur mobile.";
+
+          setStatus({ text: errorMessage, type: 'error' });
           setLoading(null);
           setMmgateStep('idle');
           setPollingId(null);
         }
-        // If 401 or 402, it continues polling
+        // If 401 or 300, it continues polling
       } catch (err) {
         console.error("Polling error:", err);
       }
-    }, 5000);
+    }, 20000);
   };
 
   const handleMMGateDuplicateConfirm = async () => {
