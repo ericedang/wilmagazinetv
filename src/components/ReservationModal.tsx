@@ -109,11 +109,12 @@ export default function ReservationModal({ isOpen, onClose, events, selectedEven
         const res = await fetch(`/api/mmgate/status/${idoper}`);
         const data = await res.json();
 
+        const pendingStates = [300, '300', 401, '401', 402, '402'];
         if (data.ETATO === 200 || data.ETATO === '200') {
           // Success
           clearInterval(pollInterval);
           await handleFinalizeReservation(idoper);
-        } else if (data.ETATO !== 300 && data.ETATO !== '300') {
+        } else if (!pendingStates.includes(data.ETATO)) {
           // Failed or Not Found
           clearInterval(pollInterval);
           setError(data.ETATO === 404 ? "Paiement refusé." : data.ETATO === 403 ? "Paiement annulé." : "Le paiement a échoué.");

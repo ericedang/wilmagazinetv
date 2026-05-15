@@ -104,12 +104,13 @@ const MagazineViewer: React.FC<MagazineViewerProps> = ({ pdfUrl, title, magazine
         const res = await fetch(`/api/mmgate/status/${idoper}`);
         const data = await res.json();
 
+        const pendingStates = [300, '300', 401, '401', 402, '402'];
         if (data.ETATO === 200 || data.ETATO === '200') {
           clearInterval(pollInterval);
           setPaymentLoading(null);
           setMmgateStep('idle');
           await grantAccess();
-        } else if (data.ETATO !== 300 && data.ETATO !== '300') { // 300 means pending, anything else is failed
+        } else if (!pendingStates.includes(data.ETATO)) { // 300, 401, 402 mean pending, anything else is failed
           clearInterval(pollInterval);
           setPaymentError(data.ETATO === 404 ? "Paiement refusé." : data.ETATO === 403 ? "Paiement annulé." : "Le paiement a échoué.");
           setPaymentLoading(null);

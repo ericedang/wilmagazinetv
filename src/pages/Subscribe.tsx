@@ -59,6 +59,7 @@ export default function Subscribe() {
         
         console.log("Polling MMGate Status:", data);
 
+        const pendingStates = [300, '300', 401, '401', 402, '402'];
         if (data.ETATO === 200 || data.ETATO === '200') {
           // Success
           clearInterval(pollInterval);
@@ -74,7 +75,7 @@ export default function Subscribe() {
           setMmgateStep('idle');
           setPollingId(null);
           setTimeout(() => navigate('/dashboard'), 3000);
-        } else if (data.ETATO !== 300 && data.ETATO !== '300') {
+        } else if (!pendingStates.includes(data.ETATO)) {
           // Failed or Not Found
           clearInterval(pollInterval);
           setStatus({ text: data.ETATO === 404 ? "Paiement refusé." : data.ETATO === 403 ? "Paiement annulé." : "Le paiement a échoué.", type: 'error' });
